@@ -421,7 +421,7 @@
 + (NSError*) callCompletionWithThreeArg:(nullable void(^)(NSError* _Nullable error, id _Nullable arg1, id _Nullable arg2))completion ifOccuredErrorInOperation:(BO*)op;
 ```
 
-Весь код вы можете увидеть здесь: [APIManager.h](CodeSnippets/APIManager.h)
+Весь код вы можете увидеть здесь: [APIManager.h](CodeSnippets(RU)/APIManager.h)
 <br><br>
 
 ### 📄 Файл APIConsts.h
@@ -459,7 +459,7 @@ typedef void(^AuthenticationCompletion)(NSError* _Nullable error);
 #endif
 ```
 
-Весь код вы можете увидеть здесь: [APIConsts.h](CodeSnippets/APIConsts.h)
+Весь код вы можете увидеть здесь: [APIConsts.h](CodeSnippets(RU)/APIConsts.h)
 <br><br>
 
 ### 📄 Файл APIMethods.h
@@ -520,7 +520,7 @@ static NSString *const logout = @"auth.logout";
 #endif 
 ```
 
-Весь код вы можете увидеть здесь: [APIMethods.h](CodeSnippets/APIMethods.h)
+Весь код вы можете увидеть здесь: [APIMethods.h](CodeSnippets(RU)/APIMethods.h)
 <br><br>
 
 ### 🏗🧱 NetworkRequestConstructor
@@ -653,7 +653,7 @@ static NSString *const logout = @"auth.logout";
 
 | Хедер файл                                                              | Файл имплементации                                                      |
 | ----------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| [NetworkRequestConstructor.h](CodeSnippets/NetworkRequestConstructor.h) | [NetworkRequestConstructor.m](CodeSnippets/NetworkRequestConstructor.m) |
+| [NetworkRequestConstructor.h](CodeSnippets(RU)/NetworkRequestConstructor.h) | [NetworkRequestConstructor.m](CodeSnippets(RU)/NetworkRequestConstructor.m) |
 
 <br><br>
 
@@ -761,8 +761,8 @@ static NSString *const logout = @"auth.logout";
 
 | Хедер файл                                                    | Файл имплементации                                            |
 | ------------------------------------------------------------- | ------------------------------------------------------------- |
-| [Templater.h](CodeSnippets/Templater.h)                       | [TemplaterFileManager.h](CodeSnippets/TemplaterFileManager.h) |
-| [TemplaterFileManager.h](CodeSnippets/TemplaterFileManager.h) | [TemplaterFileManager.m](CodeSnippets/TemplaterFileManager.m) |
+| [Templater.h](CodeSnippets(RU)/Templater.h)                       | [TemplaterFileManager.h](CodeSnippets(RU)/TemplaterFileManager.h) |
+| [TemplaterFileManager.h](CodeSnippets(RU)/TemplaterFileManager.h) | [TemplaterFileManager.m](CodeSnippets(RU)/TemplaterFileManager.m) |
 
 <br><br>
 
@@ -1082,7 +1082,7 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 
 ---
 
-Весь код вы можете увидеть здесь: [Validator.h](CodeSnippets/Validator.h) / [Validator.m](CodeSnippets/Validator.m) .
+Весь код вы можете увидеть здесь: [Validator.h](CodeSnippets(RU)/Validator.h) / [Validator.m](CodeSnippets(RU)/Validator.m) .
 <br><br>
 
 ### 🗂 🔍 Parser
@@ -1150,7 +1150,7 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 }
 ```
 
-Весь код вы можете увидеть здесь: [Parser.h](CodeSnippets/Parser.h) / [Parser.m](CodeSnippets/Parser.m) .
+Весь код вы можете увидеть здесь: [Parser.h](CodeSnippets(RU)/Parser.h) / [Parser.m](CodeSnippets(RU)/Parser.m) .
 <br><br>
 
 ### 📄 ➡️ 💾 Mapper
@@ -1275,7 +1275,7 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 @end
 ```
 
-Весь код вы можете увидеть здесь: [Mapper.h](CodeSnippets/Mapper.h) / [Mapper.m](CodeSnippets/Mapper.m) .
+Весь код вы можете увидеть здесь: [Mapper.h](CodeSnippets(RU)/Mapper.h) / [Mapper.m](CodeSnippets(RU)/Mapper.m) .
 <br><br>
 
 
@@ -1583,7 +1583,7 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 
 На этом часть статьи описывающая внутренние устройство сетевого слоя заканчивается, и начинается часть повествующая о практике использования сетевого слоя в приложении.
 
-Весь код вы можете увидеть здесь:  [APIManager.m](CodeSnippets/Mapper.m) .
+Весь код вы можете увидеть здесь:  [APIManager.m](CodeSnippets(RU)/Mapper.m) .
 
 ---
 <br>
@@ -1634,7 +1634,7 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 ```
 
 Также подобные категории можно создавать например для поддержки шифрования и прочих функциональных обязанностей.<br>
-Весь код вы можете увидеть здесь: [APIManager+Utilites.h](CodeSnippets/APIManager+Utilites.h)  / [APIManager+Utilites.m](CodeSnippets/APIManager+Utilites.m).
+Весь код вы можете увидеть здесь: [APIManager+Utilites.h](CodeSnippets(RU)/APIManager+Utilites.h)  / [APIManager+Utilites.m](CodeSnippets(RU)/APIManager+Utilites.m).
 <br>
 
 ## Практика использования сетевого слоя
@@ -1915,8 +1915,8 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 
 | Хедер файл                                        | Файл имплементации                                |
 | ------------------------------------------------- | ------------------------------------------------- |
-| [UserProfileTVC.h](CodeSnippets/UserProfileTVC.h) | [UserProfileTVC.m](CodeSnippets/UserProfileTVC.m) |
-| [UserProfileVM.h](CodeSnippets/UserProfileVM.h)   | [UserProfileVM.m](CodeSnippets/UserProfileVM.m)   |
+| [UserProfileTVC.h](CodeSnippets(RU)/UserProfileTVC.h) | [UserProfileTVC.m](CodeSnippets(RU)/UserProfileTVC.m) |
+| [UserProfileVM.h](CodeSnippets(RU)/UserProfileVM.h)   | [UserProfileVM.m](CodeSnippets(RU)/UserProfileVM.m)   |
 
 <br><br>
 
