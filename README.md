@@ -129,7 +129,7 @@
 
 В итоге при использовании стандартных подходов в построении сетевого слоя, а именно использование голых `NSURLSessionTask`, а также оберток по типу `AFNetworking` и прочих, у вас неизбежно будет образовываться `callback-hell `разной степени сложности. <br><br>
 
-<img src="Documentation/Carbon-Screens/callbackhell.jpg" title="" alt="" data-align="center">                                                                           
+<img src="Documentation/Carbon-Screens/callbackhell.jpg" title="" alt="" align="center">                                                                           
 
 Для решения этого вопроса внутри фреймворка `RXNO` был разработан класс `RXNO_GroupOperation`.
 Который точно так же как и `RXNO_BaseOperation` является прям наследником `NSOperation`, и также имеет схожий с `RXNO_BaseOperation` интерфейс управления.
