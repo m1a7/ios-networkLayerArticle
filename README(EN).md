@@ -2146,8 +2146,18 @@ In connection with the above material, I would like to recommend some technologi
 
 **Reports**
 
-1. [Evgeny Rtischev - We work effectively with the network](https://www.youtube.com/watch?v=7HtE3Ci78nU). An excellent report, which tells about the subtle nuances of working with `NSURLSession`.
-    I recommend that all developers read it before writing a network layer in a new project.
+1. [Evgeny Rtischev - We work effectively with the network](https://www.youtube.com/watch?v=7HtE3Ci78nU). The excellent report, which tells about the subtle nuances of working with `NSURLSession`.
+    I recommend all developers read it before writing a network layer in a new project.
 
 2. [Gleb Novik - Service Layer Architecture Using Composite Operations](https://www.youtube.com/watch?v=yAjzkwbFIds).
      Great talk about how to properly design and segregate responsibilities for network layer modules.
+
+
+## Additional information
+[🇷🇺Russian Readme](README(RU).md)
+
+
+##👨🏼‍💻 Author
+  👨🏼‍💻 @m1a7
+  👌🏻 thisismymail03@gmail.com
+
