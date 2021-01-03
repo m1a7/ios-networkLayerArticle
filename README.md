@@ -135,7 +135,11 @@
 
 Для решения этого вопроса внутри фреймворка `RXNO` был разработан класс `RXNO_GroupOperation`.
 Который точно так же как и `RXNO_BaseOperation` является прям наследником `NSOperation`, и также имеет схожий с `RXNO_BaseOperation` интерфейс управления.
-<img src="Documentation/Carbon-Screens/scheme3.png" title="" alt="" data-align="center">
+
+<p align="center">
+  <img src="Documentation/Carbon-Screens/scheme3.png">
+</p>
+
 
 `RXNO_GroupOperation` имеет некую схожесть с `NSBlockOperation`, и предназначен для того, чтобы в теле его `mainBlock` вы синхронно запускали выполнение обычных сетевых операций, для избежания возникновения `callback-hell`.
 
@@ -230,7 +234,9 @@
 
 Более наглядно это инженерное решение можно увидеть на данной схеме:
 
-<img src="Documentation/Carbon-Screens/scheme4.png" title="" alt="" data-align="center">
+<p align="center">
+  <img src="Documentation/Carbon-Screens/scheme4.png">
+</p>
 
 Как мы можем видеть в методе `start` алгоритм вызывает функцию `prioritySession`, которая возвращает приватную сессию из `privateSession` если она была проинициализирована, а если нет, то возвращает `defaultSession`.
 
@@ -674,7 +680,10 @@ static NSString *const logout = @"auth.logout";
 
 Если она будет пройдена успешно, то метод валидации `validateResponse:fromAPIMethod:` вернет `nil`, в противном случае будет возвращена ошибка.<br> 
 
-<img src="Documentation/Carbon-Screens/scheme5.png" title="" alt="" data-align="center">
+<p align="center">
+  <img src="Documentation/Carbon-Screens/scheme5.png">
+</p>
+
 
 Не будем вдаваться в подробности реализации данного модуля, по причине того, что он содержит множество вспомогательных функций, которые обеспечивают корректное функционирование, но прямого отношения к работе сетевого слоя не имеют.
 
@@ -1368,7 +1377,10 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 
 <br>
 
-<img title="" src="Documentation/Carbon-Screens/scheme6.png" alt="" data-align="center" width="679">
+<p align="center">
+  <img src="Documentation/Carbon-Screens/scheme6.png">
+</p>
+
 
 В конечном итоге каждый метод `APIManager`'а выглядит примерно так как показано ниже.
 Решение занимает всего 30 строчек.
@@ -1427,7 +1439,9 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 Как только получите новый токен, то сразу же вызывайте метод библиотеки который в своем блоке передаст в ваше распоряжение массив тех самый **"отложенных операций"**, а ваша задача вручную вставить в каждую из операций новый токен.<br>
 Далее вы передадите массив модифицированных операций в блок той функции, а она в свою очередь пошлет их на выполнение в очередь.<br>
 
-<img src="Documentation/Carbon-Screens/scheme7.png" title="" alt="" data-align="center">
+<p align="center">
+  <img src="Documentation/Carbon-Screens/scheme7.png">
+</p>
 
 ---
 
@@ -1467,7 +1481,9 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 
 Если процесс получения свежего токена представить в виде схемы, то она будет такой:
 
-<img src="Documentation/Carbon-Screens/scheme8.png" title="" alt="" data-align="center">
+<p align="center">
+  <img src="Documentation/Carbon-Screens/scheme8.png">
+</p>
 
 В коде метода `receiveTokenFromWebViewAuth` вы можете заметить на первый взгляд странные проперти по типу `isMayUnlockSemaphore` или методы `unlockSemaphoreForAllPostponned`.<br> 
 Дело заключается в том, что **RXNO** поддерживает синхронное выполнение операций.<br>
@@ -1647,7 +1663,9 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 По моему мнению одним из самых сбалансированных, является паттерн **MVVM**, поскольку соотношение между количеством файлов и удобством использования у него является оптимальным.<br>
 Ниже будут продемонстрированы примеры работы сетевого слоя в архитектуре **MVVM**.
 
-<img src="Documentation/Carbon-Screens/scheme9.png" title="" alt="" data-align="center">
+<p align="center">
+  <img src="Documentation/Carbon-Screens/scheme9.png">
+</p>
 
 | Обязанности<br/>ViewController                                        | Обязанности<br/>ViewModel                                                                                                                                                                        | Обязанности<br/>APIManager                                                                           |
 | --------------------------------------------------------------------- |:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
@@ -2112,13 +2130,18 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
    Что позволяет увидеть все важные детали ваших запросов.
    Прекрасная и интуитивная замена [wireshark'a](https://www.wireshark.org/).
    
-   <img src="https://github.com/yagiz/Bagel/raw/develop/assets/screenshot.png?raw=true" title="" alt="" data-align="center">
+    <p align="center">
+      <img src="https://github.com/yagiz/Bagel/raw/develop/assets/screenshot.png?raw=true">
+    </p>
+
 
 2. `Must-Have` приложение [**SnipperApp2**](https://snipper.app/) - нативный менджер сниппетов кода.
    Во времена когда мобильная архитектура стремительно усложняется, каждому разработчику необходимо иметь под рукой собственную библиотеку сниппетов.
    Постепенный отказ от гуглинга каждодневных проблем по типу `NSAppTransportSecurity`, в сумме экономит приличное количество времени.
    
-   <img title="" src="Documentation/Carbon-Screens/scheme10.png" alt="" width="959" data-align="center">
+    <p align="center">
+      <img src="Documentation/Carbon-Screens/scheme10.png">
+    </p>
 
 **Доклады**
 
