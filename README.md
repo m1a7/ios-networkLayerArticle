@@ -6,6 +6,50 @@ How to efficiently design a network layer for an iOS application.
 <img src="Documentation/Carbon-Screens/scheme11.png">
 </p>
 
+
+# Table of contents 
+
+- [For whom this article is written](#for-whom-this-article-is-written)
+- [Introduction](#introduction)
+- [The architecture of the network layer](#The-architecture-of-the-network-layer)
+- [Responsibilities of Network Layer classes](#Responsibilities-of-Network-Layer-classes)
+- [Responsibilities of individual network layer files](#Responsibilities-of-individual-network-layer-files)
+- [A brief introduction to RXNO](#A-brief-introduction-to-RXNO)
+    - [Getting json](#getting-json)
+    - [Getting image](#getting-image)
+    - [Upload photo to the server](#upload-photo-to-the-server)
+    - [Practice of avoiding callback-hell in complex compound operations](#paragraph10)
+- [The main rule of building network layer modules](#paragraph11)
+- [Detailed reviews of network layer modules](#paragraph12)
+    - [APIManager.h](#paragraph13)
+    - [The File APIConsts.h](#paragraph14)
+    - [The File APIMethods.h](#paragraph15)
+    - [NetworkRequestConstructor](#paragraph16)
+    - [Templater](#paragraph17)
+    - [Validator](#paragraph18)
+        - [General rules for all data types](#paragraph19)
+        - [Rules for Type Strings](#paragraph20)
+        - [Rules for Type Arrays](#paragraph21)
+        - [Rules for Type Dictionaries](#paragraph22)
+        - [Rules for Type Number](#paragraph23)
+    - [Parser](#paragraph24)
+    - [Mapper](#paragraph25)
+    - [APIManager.m](#paragraph26)
+        - [Checking for internet availability](#paragraph27)
+        - [Creation and processing of network operations inside APIManager](#paragraph28)
+        - [Authentication error and other errors](#paragraph29)
+        - [A brief explanation of the mechanism of action when a 401 error occurs](#paragraph30)
+        - [How the network layer handles authentication errors](#paragraph31)
+        - [APIManager and categories](#paragraph32)
+- [Practice of using the network layer](#paragraph33)
+- [Rules for viewModels in implementation files .m](#paragraph34)
+- [Procedure for adding a method to APIManager](#paragraph35)
+- [Summing up the results](#paragraph36)
+- [Conclusion](#paragraph37)
+- [Recommendations](#paragraph38)
+- [Additional information](#paragraph39)
+- [Author](#paragraph40)
+
 ## For whom this article is written
 
 The article is mainly aimed at developers who are passionate about building network layers for applications with a large functional load and complex architecture.
@@ -77,7 +121,7 @@ The technology offers a choice of several different classes for performing tasks
 
 **Examples of usage:**
 
-1) **Getting json.**
+#### 1) Getting json. <a name="getting-json"></a> 
    
    Creates, starts, and holds the operation in memory without having to create a property.
    
@@ -88,7 +132,8 @@ The technology offers a choice of several different classes for performing tasks
    ```
    
    <br>
-2. **Getting  image.**
+
+#### 2. Getting  image. <a name="getting-image"></a>
    Creates the operation and adds it to the queue.
    
    ```objectivec
@@ -101,7 +146,7 @@ The technology offers a choice of several different classes for performing tasks
    
    <br>
 
-3. **Upload photo to the server**
+#### 3. Upload photo to the server <a name="upload-photo-to-the-server"></a>
    Initializes the operation using a pre-prepared `NSURLRequest` and customizes its behavior by assigning a private `NSURLSession`, based on which the `NSURLSessionDataTask` object will be created inside the operation.
    
    ```objectivec
@@ -127,7 +172,7 @@ The technology offers a choice of several different classes for performing tasks
 
 <br>
 
-**Practice of avoiding callback-hell in complex compound operations**
+#### Practice of avoiding callback-hell in complex compound operations <a name="paragraph10"></a>
 
 Often you can witness how to fully display the controller interface, you need to perform several network requests that depend on each other and must be executed in a strict sequence.
 For example, in order to display all the user's music in a table, you first need to get the `id` of all the albums, and then only download the lists themselves.
@@ -218,7 +263,7 @@ As a result, it turns out that the end user will receive only one group operatio
 
 <br>
 
-## The main rule of building network layer modules
+## The main rule of building network layer modules  <a name="paragraph11"></a>
 
 Among others, one dominant rule can be distinguished, which is that each module of the network layer should have **only class methods** and **only property of a class**.
 
@@ -226,9 +271,9 @@ A similar radical step was taken in order to avoid generating a heap of singleto
 <br>
 <br>
 
-## Detailed reviews of network layer modules
+## Detailed reviews of network layer modules  <a name="paragraph12"></a>
 
-### 🌐🕹 APIManager.h
+### 🌐🕹 APIManager.h <a name="paragraph13"></a>
 
 | The main task                | Creation, modification and execution of network operations.                                                                                                                        |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -437,7 +482,7 @@ And finally, in the last section, helper methods are listed, into which differen
 Source code: [APIManager.h](CodeSnippets(EN)/APIManager.h)
 <br><br>
 
-### 📄 The File APIConsts.h
+### 📄 The File APIConsts.h <a name="paragraph14"></a>
 
 In this file, we declare all the `typedef` shortcuts for classes and blocks, `#define` macros and C-functions.
 
@@ -475,7 +520,7 @@ returns an error even for a correct server response.
 Source code: [APIConsts.h](CodeSnippets(EN)/APIConsts.h)
 <br><br>
 
-### 📄 The File APIMethods.h
+### 📄 The File APIMethods.h <a name="paragraph15"></a>
 
 It is good practice to declare all string constants in one place. What we will do by declaring in the file `APIMethods.h` all the methods that our network layer supports.
 
@@ -536,7 +581,7 @@ static NSString *const logout = @"auth.logout";
 Source code: [APIMethods.h](CodeSnippets(EN)/APIMethods.h)
 <br><br>
 
-### 🏗🧱 NetworkRequestConstructor
+### 🏗🧱 NetworkRequestConstructor <a name="paragraph16"></a>
 
 | The main task                | Construct 'NSURLRequest' requests for API calls |
 | ---------------------------- | ----------------------------------------------- |
@@ -670,7 +715,7 @@ Source code:
 
 <br><br>
 
-### 🖨🧾 Templater
+### 🖨🧾 Templater <a name="paragraph17"></a>
 
 | The main task                | Recover sample server responses in .json format from device disk.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -780,7 +825,7 @@ Source code:
 
 <br><br>
 
-### 🚦⚖️ Validator
+### 🚦⚖️ Validator <a name="paragraph18"></a>
 
 | The main task                | Find possible errors in the received file and notify the user about it.                                                                                                                                                                  |
 | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -961,7 +1006,7 @@ Now let's take a look at the rest of the capabilities of this technology.
 
 ---
 
-**📚 General rules for all data types**
+#### 📚 General rules for all data types <a name="paragraph19"></a>
 
 | Key name         | Description                                                                                                                                                                                                                                                                                                   |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -991,7 +1036,7 @@ And the value for the `jurisdiction`  key, not only must be present in the serve
 
 <br>
 
-**Rules for Type "🅰️🅱️" Strings**
+#### Rules for Type "🅰️🅱️" Strings <a name="paragraph20"></a>
 
 | Key name                             | Description                                                                      |
 | ------------------------------------ | -------------------------------------------------------------------------------- |
@@ -1034,7 +1079,7 @@ Let's say the confirmation code always contains only 4 digits, that is, if you r
 
 ---
 
-**Rules for the type [🍏 🍎 🍊] Arrays**
+#### Rules for the type [🍏 🍎 🍊] Arrays <a name="paragraph21"></a>
 
  In addition to the basic keys (`isOptional` and` mustMatch`), arrays support two others.
 
@@ -1061,7 +1106,7 @@ Below is a situation when it is required that the number of elements in the arra
 
 ----
 
-**Rules for type {📖} Dictionaries**
+#### Rules for type {📖} Dictionaries <a name="paragraph22"></a>
 
 By themselves, dictionaries can have only two basic validation parameters (`isOptional` and `mustMatch`), otherwise you need to set specific rules for each individual object within the dictionary.
 
@@ -1085,7 +1130,7 @@ The rules specified in the dictionary say that the absence of the `platform` dic
 
 ---
 
-**Rules for Type 1️⃣ 2️⃣ 3️⃣ Number**
+#### Rules for Type 1️⃣ 2️⃣ 3️⃣ Number <a name="paragraph23"></a>
 
 As shown in the introduction, numeric values from `json` only support minimum and maximum validation.<br>
 (⚠️) Booleans do not support validation.
@@ -1102,7 +1147,7 @@ Then there will be no errors if you do not change the structure of old objects, 
 Source code: [Validator.h](CodeSnippets(EN)/Validator.h) / [Validator.m](CodeSnippets(EN)/Validator.m) .
 <br><br>
 
-### 🗂 🔍 Parser
+### 🗂 🔍 Parser <a name="paragraph24"></a>
 
 | The main task                | Extract data from a complex structure                                                                                            |
 | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -1170,7 +1215,7 @@ Like others, the module has its own naming rules.
 Source code: [Parser.h](CodeSnippets(EN)/Parser.h) / [Parser.m](CodeSnippets(EN)/Parser.m) .
 <br><br>
 
-### 📄 ➡️ 💾 Mapper
+### 📄 ➡️ 💾 Mapper <a name="paragraph25"></a>
 
 | The main task                | Builds data models from json files             |
 | ---------------------------- | ---------------------------------------------- |
@@ -1295,12 +1340,13 @@ And the module itself will look like this
 Source code: [Mapper.h](CodeSnippets(EN)/Mapper.h) / [Mapper.m](CodeSnippets(EN)/Mapper.m) .
 <br><br>
 
-### 🌐🕹 APIManager.m
+### 🌐🕹 APIManager.m <a name="paragraph26"></a>
 
 Dear colleagues, after reading everything that is written above, you have become familiar with all the auxiliary modules that ensure the correct operation of the `APIManager` .<br>
 Now you are ready to start the most interesting part of the article, which will directly address all aspects of network layer management.<br>
 <br>
-**Checking for internet availability** 
+
+#### Checking for internet availability <a name="paragraph27"></a>
 If we want to ensure maximum performance of our network layer, then it makes sense to check for an Internet connection only after an unsuccessful completion of the network operation.
 
 For this we have a certain set of tools.<br>
@@ -1337,7 +1383,7 @@ In the sections written above, we have already mentioned the `prepareAPIManagerB
 
 <br>
 
-**Creation and processing of network operations inside APIManager**
+#### Creation and processing of network operations inside APIManager <a name="paragraph28"></a>
 
 In one of the first sections of the article, we got acquainted with the header file of the `APIManager` class, where you might have noticed the `#pragma mark-Network Operations` section, in which methods that create network operations were declared.
 
@@ -1429,13 +1475,13 @@ The solution takes only 30 lines.
 
 <br>
 
-**Authentication error and other errors**
+#### Authentication error and other errors <a name="paragraph29"></a>
 
 Traditionally, to handle errors that occurred during the execution of an operation, the `checkOnServerAndOtherError` method is used in the` APIManager` class.<br>
 It handles a wide variety of errors. If the response to errors such as operation cancellation or execution time expired is quite predictable, the `completion` block is simply called and the corresponding objects are passed to it.<br>
 The response to a `401` error is significantly different in its complexity of the solution.<br>
 
-**A brief explanation of the mechanism of action when a 401 error occurs**
+#### A brief explanation of the mechanism of action when a 401 error occurs <a name="paragraph30"></a>
 
 The **RXNO** framework in one of its classes has an array of so-called **"postponed operations"**, if your operation was completed with an authentication error, then you add it to this array.<br>
 After that, you are engaged in obtaining a new token.<br>
@@ -1448,7 +1494,7 @@ Next, you will pass an array of modified operations to the block of that functio
 
 ---
 
-**How the network layer handles authentication errors**
+#### How the network layer handles authentication errors <a name="paragraph31"></a>
 
 If the operation fails with a `401` error, the `checkOnServerAndOtherError` method will call the appropriate **RXNO** library function to add this operation to the **"postponed"** array.
 
@@ -1615,7 +1661,7 @@ Source code:  [APIManager.m](CodeSnippets(EN)/Mapper.m) .
 
 <br>
 
-**APIManager and categories**
+#### APIManager and categories <a name="paragraph32"></a>
 
 Guided by the accumulated experience of Swift development, we can conclude that the practice of creating separate categories that extend the class is quite effective.<br>
 Therefore, regardless of the language that you use on your project, if you need to expand the functionality of one of the modules, feel free to create categories.
@@ -1664,7 +1710,7 @@ Also, similar categories can be created, for example, to support encryption and 
 Source code: [APIManager+Utilites.h](CodeSnippets(EN)/APIManager+Utilites.h)  / [APIManager+Utilites.m](CodeSnippets(EN)/APIManager+Utilites.m).
 <br>
 
-## Practice of using the network layer
+## Practice of using the network layer <a name="paragraph33"></a>
 
 Of course, it is obvious that the practices of interacting with the network layer can differ significantly in different architectural patterns.<br>
 In my opinion, one of the most balanced is the **MVVM** pattern, since the ratio between the number of files and usability is optimal.<br>
@@ -1806,7 +1852,7 @@ From the listing above, we can identify some of the rules that must be executed 
 
 <br><br>
 
-**Rules for viewModels in implementation files .m**
+#### Rules for viewModels in implementation files .m <a name="paragraph34"></a>
 
 1. In methods of wrappers for network operations, in `completion` blocks from APIManager methods, always update the link to your network operation.
    
@@ -1950,7 +1996,7 @@ Source code:
 
 <br><br>
 
-## Procedure for adding a method to APIManager
+## Procedure for adding a method to APIManager <a name="paragraph35"></a>
 
 Below you will find instructions for adding support for your `API` methods to` APIManager`. <br>
 
@@ -2102,7 +2148,7 @@ Below you will find instructions for adding support for your `API` methods to` A
 
 <br>
 
-## Summing up the results
+## Summing up the results <a name="paragraph36"></a>
 
 So, colleagues, it's time to take stock of our research, what does such a network layer architecture give us?
 
@@ -2116,7 +2162,7 @@ All of the above benefits provide extraordinary ease of use and support for the 
 As a result, product development costs are reduced as time spent on support and maintenance is reduced.
 Reduced because the invented tools allow less code to manage more functionality.
 
-## Conclusion
+## Conclusion <a name="paragraph37"></a>
 
 Dear colleagues, it is absolutely clear that each application has its own focus, in relation to which its network layer develops.<br>
 Which necessarily has some specific specifics.
@@ -2128,7 +2174,7 @@ Please do not take all practices literally, it is quite possible that in an appl
 
 <br>
 
-## Recommendations
+## Recommendations <a name="paragraph38"></a>
 
 In connection with the above material, I would like to recommend some technologies and reports from other developers that can increase your efficiency in working with the network layer in `iOS` applications.
 
@@ -2155,11 +2201,11 @@ In connection with the above material, I would like to recommend some technologi
      Great talk about how to properly design and segregate responsibilities for network layer modules.
 
 
-## Additional information
+## Additional information <a name="paragraph39"></a>
 
 [🇷🇺 Russian Readme](README(RU).md)
 
 
-## Author
+## Author <a name="paragraph40"></a>
 
 [👨🏼‍💻 @m1a7](github.com/m1a7)  <br>👌🏻 thisismymail03@gmail.com

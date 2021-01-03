@@ -25,7 +25,7 @@
     - [🏗🧱 NetworkRequestConstructor](#NetworkRequestConstructor)
     - [🖨🧾 Templater](#Templater)
     - [🚦⚖️ Validator](#Validator)
-        - [📚 Общие правила для всех типов данных**](#общие-правила-для-всех-типов-данных)
+        - [📚 Общие правила для всех типов данных](#общие-правила-для-всех-типов-данных)
         - [Правила для типа "🅰️🅱️" Strings](#правила-для-типа-Strings)
         - [Правила для типа  [🍏 🍎 🍊] Arrays](#правила-для-типа-Arrays)
         - [Правила для типа {📖} Dictionaries](#правила-для-типа-Dictionaries)
