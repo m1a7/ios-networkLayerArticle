@@ -136,7 +136,9 @@ Above was one of the most trivial examples when you need to perform several oper
 
 As a result, when using standard approaches in building a network layer, namely the use of bare `NSURLSessionTask`, as well as wrappers like `AFNetworking` and others, you will inevitably form a `callback-hell `of varying degrees of complexity. <br><br>
 
-<img src="Documentation/Carbon-Screens/callbackhell.jpg" title="" alt="" data-align="center">                                                                           
+<p align="center">
+<img src="Documentation/Carbon-Screens/callbackhell.jpg">
+</p>                                                                
 
 To solve this problem, the `RXNO_GroupOperation` class was developed inside the `RXNO` framework.
 Which is just like `RXNO_BaseOperation` is a direct descendant of `NSOperation`, and also has a similar control interface to `RXNO_BaseOperation`.
