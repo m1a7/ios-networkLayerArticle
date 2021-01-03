@@ -17,11 +17,11 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
- (🗃⚖️📱) 'UserProfileVM' - viewModel табличного контроллера 'UserProfileTVC'.
+ (🗃⚖️📱) 'UserProfileVM' - viewModel for controller 'UserProfileTVC'.
  --------------------------------------------------------------------------------------------------------------*/
 
 @interface UserProfileVM ()
-// Ссылка на viewModel ячейки которая имеет горизонтальный collectionView с фото пользователя
+// Link to the viewModel of the cell that has a horizontal collectionView with the user's photo
 @property (nonatomic, strong, readwrite) UserProfileGalleryCellVM* photoGalleryVM;
 // Models
 @property (nonatomic, strong) UserProfile* userProfileModel;
@@ -34,8 +34,8 @@
 #pragma mark - NetworkOperations
 
 /*--------------------------------------------------------------------------------------------------------------
- Получает расширенную информацию о пользователе по 'self.userID' или по 'APIManager.token.userID'.
- Инициализирует viewModel ячейки с помощью полученной модели, и добавляет ее в 'cellsViewModel'.
+ Get extended information about a user by 'self.userID' or by 'APIManager.token.userID'.
+ Initializes the viewModel of the cell using the resulting model, and adds it to 'cellsViewModel'.
 --------------------------------------------------------------------------------------------------------------*/
 - (DTO*) userInfoOpRunItself:(BOOL)runOpItself
                      onQueue:(nullable NSOperationQueue*)queue
@@ -91,20 +91,20 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Получает коллекцию фотографий пользователя по его 'self.userID' или по 'APIManager.token.userID'.
- Инициализирует viewModel ячейки с помощью полученной модели, и добавляет ее в 'cellsViewModel'.
+ Gets the collection of user photos by his 'self.userID' or by 'APIManager.token.userID'.
+ Initializes the viewModel of the cell using the resulting model, and adds it to 'cellsViewModel'.
  -------
- (⚠️) В этом методе имеется особое обстоятельство:
-  Данная вьюМодель ('UserProfileVM') содержит в себе еще одну вьюМодель ('UserProfileGalleryCellVM'), которая обслуживает
-  горизонтальный 'UICollectionView' с фотографиями пользователя.
-  По факту получается, что проперти на сетевую операцию содержит дочерняя вьюМодель.
-  Так что если нам экстренно потребуется отменить выполнение операции, нужно обращаться через дочернюю вьюМодель.
+ (⚠️) There is a special circumstance in this method:
+ This viewModel ('UserProfileVM') contains another viewModel ('UserProfileGalleryCellVM'), which serves
+ horizontal 'UICollectionView' with user photos.
+ In fact, it turns out that the property for the network operation contains the child ViewModel.
+ So if we urgently need to cancel the operation, we need to contact through the child ViewModel.
  --------------------------------------------------------------------------------------------------------------*/
 - (DTO*) photosOpRunItself:(BOOL)runOpItself
                    onQueue:(nullable NSOperationQueue*)queue
                 completion:(nullable void(^)(NSError* _Nullable error))completion
 {   printMethod;
-    // Если операция выполняется в данный момент то возвращаем проперти на нее.
+    // If the operation is currently being performed, then return the property to it.
     if ([self.userPhotoNetOp isWorkingOrInProcess]){
         return self.userPhotoNetOp;
     }
@@ -134,8 +134,8 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Получает записи со стены пользователя по 'self.userID' или по 'APIManager.token.userID'.
- Инициализирует viewModel ячейки с помощью полученной модели, и добавляет ее в 'cellsViewModel'.
+ Retrieves entries from the user's wall by 'self.userID' or by 'APIManager.token.userID'.
+ Initializes the viewModel of the cell using the resulting model, and adds it to 'cellsViewModel'.
 --------------------------------------------------------------------------------------------------------------*/
 - (DTO*) wallOpRunItself:(BOOL)runOpItself
                  onQueue:(nullable NSOperationQueue*)queue
@@ -143,7 +143,7 @@
                                            NSArray<WallPostCellVM*>* _Nullable viewModels,
                                            NSArray<NSIndexPath*>*    _Nullable indexPaths))completion
 {   printMethod;
-    // Если операция выполняется в данный момент то возвращаем проперти на нее.
+    // If the operation is currently being performed, then return the property to it.
     if ([self.userWallNetOp isWorkingOrInProcess]){
         return self.userWallNetOp;
     } else
@@ -177,11 +177,11 @@
 
                     for (WallPost* wallPost in wallPosts) {
                           WallPostCellVM* cellViewModel = [WallPostCellVM initWithModel:wallPost];
-                          [weak.cellsViewModel         addObject:cellViewModel]; // Это общий массив под все ячейки
-                          [weak.wallPostsCellViewModel addObject:cellViewModel]; // Тут храниться viewModels только для WallPostCell
-                                                                                 // Сделано это для удобства, чтобы offset не рассчитывать.
+                          [weak.cellsViewModel         addObject:cellViewModel]; // This is a common array for all cells
+                          [weak.wallPostsCellViewModel addObject:cellViewModel]; // ViewModels are stored here only for WallPostCell
+                                                                                 // This is done for convenience, so that offset is not calculated.
                           [viewModels addObject:cellViewModel];
-                          [indexPaths addObject:[NSIndexPath indexPathForRow:1//[weak.cellsViewModel indexOfObject:cellViewModel]
+                          [indexPaths addObject:[NSIndexPath indexPathForRow:1
                                                                     inSection:[weak.cellsViewModel indexOfObject:cellViewModel]]];
                      }
                      op.result = wallPosts;
@@ -203,7 +203,7 @@
 }
 
 /*--------------------------------------------------------------------------------------------------------------
- Вызывает сетевую операцию которая посылает запрос о разлогирование. Отчищает хранилище на диске устройства.
+ Invokes a network operation that sends a logout request. Clear storage on device disk.
  --------------------------------------------------------------------------------------------------------------*/
 - (DTO*) logoutOpRunItself:(BOOL)runOpItself
                    onQueue:(nullable NSOperationQueue*)queue
@@ -223,9 +223,9 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Последовательно выполняет три сетевых операции (userInfoNetOp,userPhotoNetOp,userWallNetOp).
- Инициирует процесс выполнения операций не на прямую через проперти, а через метод обертки, которые берут на себя
- обязательства самостоятельно преобразовывать и сохранять полученные от 'APIManager' данные.
+ Performs three network operations in sequence (userInfoNetOp,userPhotoNetOp,userWallNetOp).
+ Initiates the process of performing operations not directly through the property, but through the wrapper method,
+ which take over obligations to independently transform and save data received from 'APIManager'.
  --------------------------------------------------------------------------------------------------------------*/
 - (GO*) performNeededOperations:(void(^)(NSError* _Nullable error))completion
 {
@@ -234,12 +234,12 @@
     // Group operation initialization
     self.loadAllNeededConentOp = [GO groupOperation:^(GO * _Nonnull groupOp){
         
-        // (!) Если мы не обращаемся к сетевым операциям через 'weak', а просто создаем их тут
-        //     То так они удаляются из памяти быстрее, нежеле чем когда мы обращаемся из блока к проперти
+        // (!) If we do not access network operations through 'weak', but simply create them here
+        //     Then they are removed from memory faster than when we access the property from the block.
         
         // UserInfoOp
         [weak userInfoOpRunItself:NO onQueue:nil completion:nil];
-        // Поддержка отмены сетевой операции, если была отмененна групповая операция
+        // Supports cancellation of network operation if group operation was canceled
         weak.userInfoNetOp.downloadProgress = ^(DTO * _Nonnull op, DTODownProgress p) {
             if (groupOp.state == RXNO_Cancelled) { [op cancel]; }
         };
@@ -274,32 +274,32 @@
     }];
     
     self.loadAllNeededConentOp.owner = self.addressInMemory;
-    // Добавляем групповую операцию в очередь для синхронных операций
+    // Add a group operation to the queue for synchronous operations
     [APIManager.syncQueue addOperation:self.loadAllNeededConentOp];
     return self.loadAllNeededConentOp;
 }
 
 #pragma mark - Management of network operations
 /*--------------------------------------------------------------------------------------------------------------
- Отменяет все запущенные сетевые операции которые выполняются в очереди
+ Cancels all running network operations in the queue
  --------------------------------------------------------------------------------------------------------------*/
 - (void) cancelAllNetworkOperations
 {
     printMethod;
-    // Во время создания операций мы обязательно присваиваем значение в поле 'owner', чтобы в будущем, если возникнет
-    // ситуация когда во время выполнения сетевой операции пользователь покинет экран, а операция будет выполняться в
-    // очереди, мы могли ее отменить.
+    // When creating operations, we make sure to assign a value in the 'owner' field, so that in the future,
+    // if a situation arises when during the execution of a network operation the user leaves the screen,
+    // and the operation is performed in the queue, we can cancel it.
     
-    // Фраемворк RXNO предлагает на выбор два метода помощника.
-    // 1) cancelAllNetworkOperationsByEqual нужен когда мы в качестве 'owner' передаем именно ссылку на какой-то объект.
-    //    И по нему хотим определять, нужно ли отменять операцию или нет.
+    // The RXNO framework offers a choice of two helper methods.
+    // 1) cancelAllNetworkOperationsByEqual it is needed when we pass the link to some object as the 'owner'.
+    //   And we want to determine from it whether the operation needs to be canceled or not.
     
-    // 2) cancelAllNetworkOperationsByEqualToString нужен когда в качестве 'owner' мы устанавливаем именно набор символов,
-    //    то есть если есть вероятность, что при создании и установки значения в проперти был установлен объект с одним
-    //    адресом, а в метод отмены уже передается с другим адресом, но по факту и первый и второй содержат один и тот же
-    //    набор символов.
+    // 2) cancelAllNetworkOperationsByEqualToString needed when we set the character set as 'owner',
+    //    that is, if there is a possibility that when creating and setting a value in property, an object with one address was set,
+    //    and it is already passed to the cancellation method with a different address, but in fact both the first and the second contain
+    //    the same set of characters.
     
-    // Отменяем работу сразу на двух очередях
+    // Canceling work on two queues at once
     [BO cancelAllNetworkOperationsByEqualToString:self.addressInMemory inQueue:APIManager.aSyncQueue];
     [BO cancelAllNetworkOperationsByEqualToString:self.addressInMemory inQueue:APIManager.syncQueue];
 }
@@ -309,7 +309,7 @@
 #pragma mark - Initialization
 
 /*--------------------------------------------------------------------------------------------------------------
- Инициализирует viewModel с 'userID'. (Данные получает по результату выполнения сетевого запроса в будущем)
+ Initializes the viewModel with 'userID'. (The data is obtained by the result of a network request in the future)
  --------------------------------------------------------------------------------------------------------------*/
 + (UserProfileVM*) initWithUserID:(nullable NSString*)userID
 {
@@ -332,7 +332,7 @@
 #pragma mark - Getters/Setters
 
 /*--------------------------------------------------------------------------------------------------------------
-  Хранит абсолютно все вьюМодели ячеек представленных в таблице.
+  Stores absolutely all the viewModels of the cells presented in the table.
  --------------------------------------------------------------------------------------------------------------*/
 - (NSMutableArray<id> *)cellsViewModel
 {
@@ -343,7 +343,7 @@
 }
 
 /*--------------------------------------------------------------------------------------------------------------
-  Хранит только вьюМодели класса 'WallPostCellVM'
+  Stores only viewModels of 'WallPostCellVM' class
  --------------------------------------------------------------------------------------------------------------*/
 - (NSMutableArray<WallPostCellVM *> *)wallPostsCellViewModel
 {
@@ -354,7 +354,7 @@
 }
 
 /*--------------------------------------------------------------------------------------------------------------
-  Хранит id пользователя
+ Stores user id
  --------------------------------------------------------------------------------------------------------------*/
 - (NSString *)userID
 {
@@ -365,7 +365,7 @@
 }
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает имя пользователя
+  Returns the username
  --------------------------------------------------------------------------------------------------------------*/
 - (NSString *)userFirstName
 {

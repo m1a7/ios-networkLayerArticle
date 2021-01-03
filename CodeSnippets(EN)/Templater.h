@@ -13,86 +13,86 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*--------------------------------------------------------------------------------------------------------------
- 🖨🧾 'Templater' - восстанавливает образцы ответов сервера в формате .json с диска устройства.
+ 🖨🧾 'Templater' - restores sample server responses in .json format from the device disk.
  ---------------
- Главная задача предоставлять пользователю экземпляры NSDictionary инициализированные с помощью json файлов
- хранящихся на диске.
+ The main task is to provide the user with NSDictionary instances initialized using json files
+ stored on disk.
  ---------------
  [⚖️] Duties:
- - Взаимодействовать с классом 'TemplaterFileManager' который осуществляет управление песочницей.
- - Записывать/Читать значения из NSUserDefault.
- - Осуществлять работу со строками (редактирование путей для папок в песочнице).
+ - Interact with the 'TemplaterFileManager' class that manages the sandbox.
+ - Write / Read values from NSUserDefault.
+ - Work with strings (editing paths for folders in the sandbox).
  ---------------
  The class provides the following features:
- - Инициализировать словари из json файлов находящихся в песочнице приложения.
- - Записывать шаблоны в песочницу по имени API метода, по которому был совершен запрос.
- - Удалять конкретный шаблон, по имени API метода, по которому был совершен запрос.
- - Удалять все шаблоны с диска.
- - Возможность безопастно перемещать папку с шаблонами в другие лоакции.
+ - Initialize dictionaries from json files located in the application sandbox.
+ - Sandbox templates by the API name of the request method.
+ - Remove a specific template by the API name of the method that was requested.
+ - Delete all templates from disk.
+ - Ability to safely move the template folder to other locations.
  ---------------
  Additionally:
- (⚠️) Архитектура класса была спланирована таким образом, чтобы во время использования приложения, можно было
-      динмачески добавлять новые и изменять старые шаблоны.
- Такая возможность имеется только при работе с песочницей, поскольку в bundle приложения файлы добавить кодом нельзя.
+ (⚠️) The architecture of the class was planned in such a way that while using the application, it was possible to
+      dynamically add new and change old templates.
+     This feature is available only when working with a sandbox, since you cannot add files to the application bundle with code.
  
- Из этого следует следующая проблема, -"Откуда Templater должен брать файлы для Валидатора, если только что скаченное
- приложения из AppStore имеет чистую песочницу ?".
+ This leads to the following problem, - "Where should Templater take files for the Validator, if the just downloaded
+ does the app from the AppStore have a clean sandbox? "
  
- Одним из возможных решения может быть сохранение архива шаблонов с именем 'APIManagerResponseDefaultTemplates.zip'
- в bundle приложения, а затем во время первого запуска нужно вызывать метод +unarchiveFolderWithDefaultTemplates:..,
- который разархивиет папку в нужную директорию (по умолчанию в 'pathToTemplateDirectory').
+ One possible solution could be to save a template archive with the name 'APIManagerResponseDefaultTemplates.zip'
+ in the bundle of the application, and then during the first launch, you need to call the unarchiveFolderWithDefaultTemplates: .. method,
+ which will unzip the folder to the desired directory (by default in 'pathToTemplateDirectory').
  
- В последующим использовании приложения вы получать json файлы с диска, а также модифицировать их.
+ In the subsequent use of the application, you get json files from disk, and also modify them.
  --------------------------------------------------------------------------------------------------------------*/
 
 
 @interface Templater : NSObject
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает адрес на папку, которая содержит файлы-шаблоны.
- Если вы измените значение папки, то папка вместе с файлами переместиться в другое место.
+ Returns the address to the folder that contains the template files.
+ If you change the value of the folder, then the folder along with the files will move to another location.
  --------------------------------------------------------------------------------------------------------------*/
 @property (atomic, strong, readonly, class) NSString* pathToTemplateDirectory;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- По-умолчанию имеет значение 'NO'. Если заменить на 'YES', то требуемый файл будет искать в bundle приложения.
+ The default is 'NO'. If you replace it with 'YES', then the required file will be searched for in the bundle of the application.
  --------------------------------------------------------------------------------------------------------------*/
 @property (nonatomic, assign, class) BOOL loadTemplateFromBundle;
 
 #pragma mark - Methods
 
 /*--------------------------------------------------------------------------------------------------------------
- Позволяет безопастно изменить местоположение папки с шаблонами.
+ Allows you to safely change the location of the templates folder.
  --------------------------------------------------------------------------------------------------------------*/
 + (void) setNewPathToTemplateDirectory:(NSString*)path;
 
 /*--------------------------------------------------------------------------------------------------------------
- Востанавливает ранее записанный json файл с диска или возвращает его из RAM памяти.
+ Recovers a previously written json file from disk or returns it from RAM memory.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSDictionary*) templateForAPIMethod:(APIMethod)method;
 
 /*--------------------------------------------------------------------------------------------------------------
- Записывает образец файла с именем API метода
+  Writes a sample file named method API
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSError*) writeTemplate:(NSDictionary*)template forAPIMethod:(APIMethod)method;
 
 /*--------------------------------------------------------------------------------------------------------------
- Удаляет образец файла с диска и из RAM по имени API метода
+ Removes sample file from disk and from RAM by method API name
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSError*) removeTemplateForAPIMethod:(APIMethod)method;
 
 /*--------------------------------------------------------------------------------------------------------------
- Позволяет безопастно удалить папку со всеми шаблонами одновременно
+  Allows you to safely delete a folder with all templates at the same time
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSError*) removeAllTemplates;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод распаковывает архив с папкой стандартных json файлов (ответов от сервера).
- Если укажите nil в аргумент 'atPath', тогда алгоритм автоматический разархиврует папку по пути 'Templater.pathToTemplateDirectory'.
- Данный метод вы можете вызывать каждый раз при запуске приложения внутри метода +APIManager.prepareBeforeUsing:,
- внутри встроена защита от повторных разархиврований.
+ The method unpacks an archive with a folder of standard json files (responses from the server).
+ If you specify nil in the 'atPath' argument, then the algorithm will automatically unzip the folder to the 'Templater.pathToTemplateDirectory' path.
+ You can call this method every time you start the application inside the +APIManager.prepareBeforeUsing: method,
+ inside built-in protection against repeated unzipping.
  --------------------------------------------------------------------------------------------------------------*/
 + (void) unarchiveFolderWithDefaultTemplates:(nullable NSString*)atPath
                                   completion:(nullable void(^)(NSError* error))completion;

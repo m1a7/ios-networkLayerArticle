@@ -327,7 +327,7 @@
                 weak.isLoadingData = NO;
                 return;
             }
-            // Таким образом вычилсяем и кэшируем все значения для контента внутри ячейки - здесь, на фоновом потоке.
+            // Таким образом вычисляем и копируем все значения для контента внутри ячейки - здесь, на фоновом потоке.
             for (WallPostCellVM* cellVM in viewModels) {
                 [WallPostCell calculateCoordinatesForVM:cellVM tableSize:tableSize];
             }

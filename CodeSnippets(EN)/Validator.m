@@ -9,12 +9,12 @@
 #import "Validator.h"
 // APIManager's Categories
 #import "APIManager+Utilites.h"
-// Восстанавливает с диска json файлы по ключам APIMethod
+// Recovers json files from disk using APIMethod keys
 #import "Templater.h"
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Константы для работы со словарями содержащими правила для расширенной валидации
+Constants for working with dictionaries containing rules for extended validation
  --------------------------------------------------------------------------------------------------------------*/
 
 // Shared
@@ -42,8 +42,8 @@ NSString * const maximumKey  = @"maximum";
  | [📄⚙️] ➡️ [🗃] Instructions for adding new validation parameters to dictionary rules.
  ---------------------------------------------------------------------------------------------------------------
  
- 1. Добавьте новый ключ как константу в шапке файла.
- 2. Добавьте обработку новых ключей в методы валидации разных типов:
+ 1. Add the new key as a constant in the header of the file.
+ 2. Add new key handling to different types of validation methods:
      +validateString:
      +validateArray:
      +validateDictionary:
@@ -52,18 +52,18 @@ NSString * const maximumKey  = @"maximum";
 
 
 /*--------------------------------------------------------------------------------------------------------------
- | 🚦⚖️📄 Инструкция по добавлению новых методов валидирующих ответы сервера
+ | 🚦⚖️📄 Instructions for adding new methods to validate server responses
  ---------------------------------------------------------------------------------------------------------------
  
- 1. Создайте новый уникальный метод. Используйте префикс "validateResponseFrom_", после должно идти имя API метода
-    Пример:
-   + (NSError* _Nullable) validateResponseFrom_usersGet:(NSDictionary*)recievedJSON
+ 1. Create a new unique method. Use the "validateResponseFrom_" prefix, followed by the method API name
+ Example:
+   +(NSError* _Nullable)validateResponseFrom_usersGet:(NSDictionary*)recievedJSON
 
- 2. Самостоятельно реализуйте валидацию ответа. Выбрав автоматическую либо ручную.
+ 2. Implement response validation yourself. By choosing automatic or manual.
  
- 3. Предварительно добавив значение для нового API метода в перечисление APIMethod.
+ 3. By pre-adding the value for the new API method to the APIMethod enumeration.
  
- 4. В методе +validateResponse:fromAPIMethod: добавьте свой метод валидации в конструкцию switch.
+ 4. In the +validateResponse:fromAPIMethod: method, add your validation method to the switch construct.
  --------------------------------------------------------------------------------------------------------------*/
 
 
@@ -90,7 +90,7 @@ NSString * const maximumKey  = @"maximum";
 #pragma mark - Shared Validation Methods
 
 /*--------------------------------------------------------------------------------------------------------------
-  Метод распределитель, самостоятельно определяет какой метод валидации вызывать для json полученного по конкретнному методу API
+ The distributor method independently determines which validation method to call for json received by a specific API method
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponse:(NSDictionary*)recievedJSON fromAPIMethod:(APIMethod)method
 {
@@ -130,11 +130,11 @@ NSString * const maximumKey  = @"maximum";
 #pragma mark - Specific Validation Methods (for specific API methods)
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод валидирует ответ сервера на запрос метода "users.get".
+ The method validates the server response to the "users.get" method request.
  ------------------------------------------------------------
- Реализация метода полностью зависит от потребностей разработчика.
- Вы можете написать тут собственную кастомную проверку, а при наличии шаблона можете воспользоваться методом
- автоматического тестирования, который сверит полученный json и его образец с диска по десятку параметров.
+ The implementation of the method depends entirely on the needs of the developer.
+ You can write your own custom check here, and if you have a template, you can use the method
+ automatic testing, which will compare the received json and its sample from disk by ten parameters.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponseFrom_usersGet:(NSDictionary*)recievedJSON
 {
@@ -150,7 +150,7 @@ NSString * const maximumKey  = @"maximum";
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод валидирует ответ сервера на запрос метода "wall.get".
+The method validates the server response to the request for the "wall.get" method.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponseFrom_wallGet:(NSDictionary*)recievedJSON
 {
@@ -166,7 +166,7 @@ NSString * const maximumKey  = @"maximum";
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод валидирует ответ сервера на запрос метода "photos.getAll".
+ The method validates the server response to the "photos.getAll" method request.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponseFrom_photosGetAll:(NSDictionary*)recievedJSON
 {
@@ -177,7 +177,7 @@ NSString * const maximumKey  = @"maximum";
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод валидирует ответ сервера на запрос метода "friends.get".
+ The method validates the server response to the "friends.get" method request.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponseFrom_friendsGet:(NSDictionary*)recievedJSON
 {
@@ -206,12 +206,12 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод автоматической валидации сверяет пришедший json и образец с диска.
- В случае нахождения несовпадений - возвращает ошибку.
+ The automatic validation method verifies the received json and the sample from disk.
+ If a mismatch is found, it returns an error.
  
- Также вы самостоятельно можете значительно кастомизировать процесс валидации - прописав условия в шаблоне для каждого
- объекта из json.
- Пример:
+ You can also significantly customize the validation process yourself - by writing conditions in the template for each
+ object from json.
+ Example:
  
  {
    "fistName" : "Steve",
@@ -220,8 +220,8 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
                        }
  }
  
- Создайте словарь с правилами по приниципу "имяКлюча-Rules". Алгоритм автоматический определит наличие дополнительных
- параметров валидации для таких объектов.
+ Create a dictionary with rules according to "KeyName-Rules". The algorithm will automatically detect the presence of additional
+ validation parameters for such objects.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) automaticValidateResponse:(NSDictionary*)recievedJSON
                                         template:(NSDictionary*)templateJSON
@@ -248,9 +248,9 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
         if ([key hasSuffix:@"-Rules"]){
             continue;
         }
-        // Массив нужен для того, чтобы в конце цикла for решить, нужно ли осуществлять проверку на правила.
-        // Если ошибки были обнаружены в основным алгоритмом то есть (отсутьствие ключа,другой класс итд),
-        // тогда просто нету смысла осуществлять проверку на правила для конкретнной пары ключ-значение
+        // The array is needed in order to decide at the end of the for loop whether to check for rules.
+        // If errors were found in the main algorithm, that is (lack of a key, another class, etc.),
+        // then there is simply no point in checking for rules for a specific key-value pair
         NSMutableArray* localUserInfoArray = [NSMutableArray new];
 
         id valueFromJSON     = recievedJSON[key];
@@ -259,7 +259,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
         NSDictionary* rules = [Validator rulesByKey:key inJSON:templateJSON];
         BOOL     isOptional = [rules[isOptionalKey] boolValue];
 
-        // Проверяем на наличие ключей
+        // Checking for keys
         if ((mask & CheckOnKeys) && (![allKeysFromRecievedJSON containsObject:key]) && (!isOptional)){
             isOccuredError = YES;
             domain = [NSString stringWithFormat:@"json hasn't '%@' key",key];
@@ -269,13 +269,13 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
             continue;
         }
         
-        // Проверка на типы
+        // Type checking
         if (mask & CheckOnTypesOfValues)
         {
             NSString* superClassValueFromJSON     = [Validator typeSuperClassName:[valueFromJSON superclass]];
             NSString* superClassValueFromTemplate = [Validator typeSuperClassName:[valueFromTemplate superclass]];
             
-            // Обрабатываем случай если значения по ключам имеет разные типы,классы.
+            // We handle the case if the values for the keys have different types, classes.
             if (![superClassValueFromJSON isEqualToString:superClassValueFromTemplate]){
                 isOccuredError = YES;
                 domain = [NSString stringWithFormat:@"Value for key '%@' in recievedJSON has class (%@)\n"
@@ -286,7 +286,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
             }
         }
         
-        // Проверяем вложенности
+        // Checking nesting
         if ((mask & CheckSubEntityOnKeys) && (recievedJSON[key])){
             
             //NSLog(@"valueFromJSON.class %@",NSStringFromClass([valueFromJSON superclass]));
@@ -295,7 +295,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
            if (([valueFromJSON isKindOfClass:[NSDictionary class]]) &&
                ([valueFromTemplate isKindOfClass:[NSDictionary class]])) {
                
-                // Рекурсивно вызываем проверку вложенных подсловарей
+                // Recursively invoke the check of nested subdictionaries
                 NSError* subError = [Validator automaticValidateResponse:valueFromJSON
                                                                 template:valueFromTemplate
                                                           validationMask:mask
@@ -309,7 +309,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
             }
         }
         
-        // Запускаем проверку на словарь с правилами, если мы прошли все предыдущие проверки
+        // We run a check for a dictionary with rules if we have passed all the previous checks
         if ((mask & CheckOnExtendedRules) && (rules.allKeys.count > 0) && (localUserInfoArray.count < 1)) {
             NSError* subError = [Validator validateJSONValue:valueFromJSON templateValue:valueFromTemplate key:key onRules:rules];
           
@@ -322,7 +322,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
         }
     }
     
-    // Инициализируем ошибку если она возникла
+    // We initialize an error if it occurs
     if (isOccuredError)
     {
         NSString* APIMethod = [API convertAPIMethodToString:method];
@@ -348,9 +348,9 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
 #pragma mark - Rule Validate
 
 /*--------------------------------------------------------------------------------------------------------------
- Осуществляет проверку по параметрам заданным в json файле.
- Принимает значение из json файла, и в зависимости от их типа (String/Array/Dictionary/Number) вызывать нужный
- метод валидации для данного типа.
+ Checks according to the parameters specified in the json file.
+ Takes a value from a json file, and depending on their type (String / Array / Dictionary / Number), call the required
+ the validation method for the given type.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateJSONValue:(id)jsonValue templateValue:(id)templateValue key:(NSString*)key onRules:(NSDictionary*)rules
 {
@@ -367,7 +367,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
     NSString* superClassValueFromJSON     = [Validator typeSuperClassName:[jsonValue superclass]];
     NSString* superClassValueFromTemplate = [Validator typeSuperClassName:[templateValue superclass]];
     
-    // Обрабатываем случай если значения по ключам имеет разные типы,классы.
+    // We handle the case if the values for the keys have different types, classes.
     if (![superClassValueFromJSON isEqualToString:superClassValueFromTemplate]){
         message = @"jsonValue & templateValue are members of other classes. In +validateJSONValue:templateValue:key:onRules:";
         return [NSError errorWithDomain:message code:0 userInfo:@{ @"userInfoArray" : @[message] }];
@@ -397,7 +397,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
 }
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод занимается валидированием переменных типа NSString
+The method is engaged in the validation of variables of type NSString
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateString:(nullable NSString*)jsonString
                        templateString:(NSString*)templateString
@@ -423,7 +423,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
     NSArray*  matchWithOneOf    =  rules[matchWithOneOfKey];
     
     
-    // Если значение из json==nil, а условия говорят, что проперти необязательно
+    // If the value from json == nil, and the conditions say that it is not necessary to property
     if ((isOptional) && (!jsonString)){
         return nil;
     }
@@ -486,7 +486,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод занимается валидированием объектов типа NSArray
+ The method is engaged in validating objects of type NSArray
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateArray:(nullable NSArray*)jsonArray
                        templateArray:(NSArray*)templateArray
@@ -509,7 +509,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
     NSInteger elementsMustBeEqualOrMoreThan = [rules[elementsMustBeEqualOrMoreThanKey] integerValue];
     NSInteger elementsMustBeEqualOrLessThan = [rules[elementsMustBeEqualOrLessThanKey] integerValue];
     
-    // Если значение из json==nil, а условия говорят, что проперти необязательно
+    // If the value from json == nil, and the conditions say that it is not necessary to property
     if ((isOptional) && (!jsonArray)){
         return nil;
     }
@@ -547,7 +547,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод занимается валидированием объектов типа NSDictionary
+ The method is engaged in validating objects of type NSDictionary
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateDictionary:(nullable NSDictionary*)jsonDictionary
                        templateDictionary:(NSDictionary*)templateDictionary
@@ -566,7 +566,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
     BOOL isOptional = [rules[isOptionalKey] boolValue];
     BOOL  mustMatch = [rules[mustMatchKey]  boolValue];
     
-    // Если значение из json==nil, а условия говорят, что проперти необязательно
+    // If the value from json == nil, and the conditions say that it is not necessary to property
     if ((isOptional) && (!jsonDictionary)){
         return nil;
     }
@@ -584,7 +584,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод занимается валидированием объектов типа NSNumber. Обрабатывает только численные значения (int/float/..ect)
+ The method validates objects of type NSNumber. Only handles numeric values (int / float / .. ect)
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateNumber:(nullable NSNumber*)jsonNumber
                        templateNumber:(NSNumber*)templateNumber
@@ -609,7 +609,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
     float  maximum = [rules[maximumKey]  floatValue];
 
     
-    // Если значение из json==nil, а условия говорят, что проперти необязательно
+    // If the value from json == nil, and the conditions say that it is not necessary to property
     if ((isOptional) && (!jsonNumber)){
         return nil;
     }
@@ -619,7 +619,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
         [userInfoArray addObject:domain];
     }
     
-    // BOOL далее не валидируем
+    // BOOL is not validated further
     if ([NSStringFromClass([jsonNumber class]) isEqualToString:@"__NSCFBoolean"]){
           if (userInfoArray.count > 0) return [NSError errorWithDomain:domain code:0 userInfo:@{ @"userInfoArray" : userInfoArray }];
     }
@@ -670,27 +670,27 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
 #pragma mark - Helper
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод принимает объект 'Class' и  возвращает имя суперкласса приведенное к одому стандарту.
- Например может возникнуть ситуация, что в друх разных словарях строки могут быть представлены разными классами
- ('__NSCFString' и 'NSString').
- Поэтому класс управляет всеми исключениями, и возвращает всегда названия классов из Foundation.
+ The method accepts a 'Class' object and returns the superclass name cast to one standard.
+ For example, a situation may arise that in other dictionaries, strings can be represented by different classes
+ ('__NSCFString' and 'NSString').
+ Therefore, the class manages all exceptions, and always returns the class names from Foundation.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSString*) typeSuperClassName:(Class)superClass
 {
     NSString* superClassName = NSStringFromClass(superClass);
     
-    // Исключения
+    // Exceptions
     if (([superClassName isEqualToString:@"__NSCFString"]) || ([superClassName isEqualToString:@"NSMutableString"])){
         return @"NSString";
     }
     
-    // Далее тут можно прописывать поддержку других классов....
+    // Further here you can write support for other classes ...
     return superClassName;
 }
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает словарь с правилами (если он имеется) для конкретного ключа из общего json
+ Returns a dictionary with rules (if any) for a specific key from a common json
  --------------------------------------------------------------------------------------------------------------*/
 + (NSDictionary* _Nullable) rulesByKey:(NSString*)key inJSON:(NSDictionary*)json
 {
@@ -708,33 +708,31 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Удаляет все правила из словаря и из его вложенных структур.
- Это требуется в тех случаях, когда ключ "mustMatch" имеет целый словарь из шаблона, который в себе имеет
- правила для своих вложенных объектов.
+ Removes all rules from the dictionary and from its nested structures.
+ This is required in cases when the "mustMatch" key has a whole dictionary from the template, which has
+ rules for their nested objects.
  
- Чтобы алгоритм корректно провел сравнение ответа сервера и шаблона, то из последнего нужно удалить все 'rules'.
+ In order for the algorithm to correctly compare the server response and the template, all 'rules' must be removed from the latter.
  --------------------------------------------------------------------------------------------------------------*/
 
 + (NSDictionary* _Nullable) removeAllRulesFromDictionaryAndNastedStructure:(NSDictionary*)dictionary
 {
     NSMutableDictionary* mutableCopy = [dictionary mutableCopy];
     
-    // (!) Кстати как решение, словари же можно было запаралелить, и искать пути в одном, а удалять в другом...
-    
-    // Проходим по всему словарю через его ключи
+    // We go through the entire dictionary through its keys
     for (NSString* key in [mutableCopy allKeys]) {
         
-        // Если ключ содержит в себе этот суффикс, то значение это словарь с правилами, тогда удаляем сразу.
+        // If the key contains this suffix, then the value is a dictionary with rules, then we delete it immediately.
         if ([key rangeOfString:@"-Rules"].location != NSNotFound){
             [mutableCopy removeObjectForKey:key];
             continue;
         }
-        // Если значение по ключу это какой-то словарь, то вызываем метод рекурсивно, пусть отчистит и вернет чистый.
+        // If the value by key is some kind of dictionary, then we call the method recursively, let it clean up and return a clean one.
         if ([mutableCopy[key] isKindOfClass:[NSDictionary class]]){
             mutableCopy[key] = [Validator removeAllRulesFromDictionaryAndNastedStructure:mutableCopy[key]];
             continue;
         }
-        // Если значение по ключу это некий массив, то также вызываем метод и пусть вернет нам читсый массив
+        // If the value by key is an array, then we also call the method and let it return us a readable array
         if ([mutableCopy[key] isKindOfClass:[NSArray class]]){
             mutableCopy[key] = [Validator removeAllRulesFromArrayAndNastedStructure:mutableCopy[key]];
             continue;
@@ -749,21 +747,21 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
   Если массивы содержат в себе словари, а эти словари содержат объекты для которых имеются правила, то метод
   -isEqualToArray: не сможет выполнить корректную проверку.
  
-  Для этого требуется удалить все правила во вложенных объектах.
+  This requires deleting all rules in nested objects.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSArray* _Nullable) removeAllRulesFromArrayAndNastedStructure:(NSArray*)array
 {
     NSMutableArray* mutableCopy = [array mutableCopy];
     
-    // Массив для хранения индексов словарей
+    // Array for storing indexes of dictionaries
     NSMutableArray<NSNumber*>* dictionariesIndexes = [NSMutableArray new];
     
-    // Массив для хранения словарей
+    // Array for storing dictionaries
     NSMutableArray<NSDictionary*>* dictionaries    = [NSMutableArray new];
     
     
-    // Проходим по массиву, определяем если текущий объект это словарь.
-    // То заносим информацию в (dictionariesIndexes и dictionaries).
+    // We go through the array, determine if the current object is a dictionary.
+    // Then we enter the information into (dictionariesIndexes и dictionaries).
     for (NSInteger i=0; i<=mutableCopy.count-1; i++) {
         
         id value = mutableCopy[i];
@@ -773,17 +771,17 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
         }
     }
     
-    // Проходим по массиву который содержит словари
+    //We go through the array that contains dictionaries
     for (NSInteger i=0; i<=dictionaries.count-1; i++) {
         
-        // Берем словарь
+        // We take a dictionary
         NSDictionary* dictionary = dictionaries[i];
-        // Берем его порядковый индекс в массиве mutableCopy (!)
+        // We take its ordinal index in the mutableCopy array (!)
         NSInteger         index  = [dictionariesIndexes[i] integerValue];
         
-        // Вызываем метод отчистки словарей
+        // Call the dictionaries cleanup method
         NSDictionary* newDict = [Validator removeAllRulesFromDictionaryAndNastedStructure:dictionary];
-        // Отчищенный словарь помещаем по индексу в основной массив
+        // Place the cleaned-up dictionary by index into the main array
         mutableCopy[index] = newDict;
     }
     return mutableCopy;
@@ -791,7 +789,7 @@ ____    ____  ___       __       __   _______       ___   .___________. __    __
 
 
 /*--------------------------------------------------------------------------------------------------------------
-  Возвращает массив строк у которых все символы переведены в малый регистр.
+  Returns an array of strings with all characters converted to small case.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSArray*) lowercaseArray:(NSArray*)array
 {

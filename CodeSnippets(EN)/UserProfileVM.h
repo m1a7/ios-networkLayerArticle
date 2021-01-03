@@ -6,36 +6,36 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-// ViewModel для контроллера UserProfileTVC
+// ViewModel for UserProfileTVC Controller
 @class WallPostCellVM;
 @class UserProfileCellVM;
 @class UserProfileGalleryCellVM;
 
 /*--------------------------------------------------------------------------------------------------------------
- (🗃⚖️📱) 'UserProfileVM' - viewModel табличного контроллера 'UserProfileTVC'.
+ (🗃⚖️📱) 'UserProfileVM' - viewModel for controller 'UserProfileTVC'.
  --------------------------------------------------------------------------------------------------------------*/
 
 @interface UserProfileVM : NSObject
 
-// Пользовательские данные
+// User Data
 @property (nonatomic, strong) NSString* userID;
+@property (nonatomic, weak, nullable) NSString* userFirstName;
 
-// Данные для UI
+// Data for UI
 /*--------------------------------------------------------------------------------------------------------------
- ViewModel сложно составных таблиц имеют следующие разделение в хранении вьюМоделей ячеек:
- Один общий массив для всех вьюМоделей, и доп.массив/ы для каждого из классов вьюМоделей ячеек.
- 1) 'cellsViewModel'         - хранит абсолютно все вьюМодели ячеек представленных в таблице.
- 2) 'wallPostsCellViewModel' - хранит только вьюМодели класса 'WallPostCellVM'.
+ViewModels of complex composite tables have the following separation in the storage of ViewModels of cells:
+ One common array for all viewModels, and additional array/s for each of the cell viewModel classes.
+ 1) 'cellsViewModel'         - stores absolutely all the viewModels of the cells presented in the table.
+ 2) 'wallPostsCellViewModel' - stores only viewModels of the 'WallPostCellVM' class.
  --------------------------------------------------------------------------------------------------------------*/
 @property (nonatomic, strong) NSMutableArray<id>* cellsViewModel;
 @property (nonatomic, strong) NSMutableArray<WallPostCellVM*>* wallPostsCellViewModel;
 
-// Ссылка на viewModel для горизонтального 'UICollectionView' с фотографиями пользователя
+// ViewModel reference for horizontal 'UICollectionView' with user photos
 @property (nonatomic, strong, readonly) UserProfileGalleryCellVM* photoGalleryVM;
 
-@property (nonatomic, weak, nullable) NSString* userFirstName;
 
-// Сетевые операции
+// Network operations
 @property (nonatomic, strong) GO* loadAllNeededConentOp;
 
 @property (nonatomic, strong) __block DTO* userInfoNetOp;
@@ -45,8 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Work with Network operations
 /*--------------------------------------------------------------------------------------------------------------
-  Получает расширенную информацию о пользователе по 'self.userID' или по 'APIManager.token.userID'.
-  Инициализирует viewModel ячейки с помощью полученной модели, и добавляет ее в 'cellsViewModel'.
+ Get extended information about a user by 'self.userID' or by 'APIManager.token.userID'.
+ Initializes the viewModel of the cell using the resulting model, and adds it to 'cellsViewModel'.
  --------------------------------------------------------------------------------------------------------------*/
 - (DTO*) userInfoOpRunItself:(BOOL)runOpItself
                      onQueue:(nullable NSOperationQueue*)queue
@@ -54,8 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Получает коллекцию фотографий пользователя по его 'self.userID' или по 'APIManager.token.userID'.
- Инициализирует viewModel ячейки с помощью полученной модели, и добавляет ее в 'cellsViewModel'.
+ Gets the collection of user photos by his 'self.userID' or by 'APIManager.token.userID'.
+ Initializes the viewModel of the cell using the resulting model, and adds it to 'cellsViewModel'.
  --------------------------------------------------------------------------------------------------------------*/
 - (DTO*) photosOpRunItself:(BOOL)runOpItself
                    onQueue:(nullable NSOperationQueue*)queue
@@ -63,8 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Получает записи со стены пользователя по 'self.userID' или по 'APIManager.token.userID'.
- Инициализирует viewModel ячейки с помощью полученной модели, и добавляет ее в 'cellsViewModel'.
+ Retrieves entries from the user's wall by 'self.userID' or by 'APIManager.token.userID'.
+ Initializes the viewModel of the cell using the resulting model, and adds it to 'cellsViewModel'.
  --------------------------------------------------------------------------------------------------------------*/
 - (DTO*) wallOpRunItself:(BOOL)runOpItself
                  onQueue:(nullable NSOperationQueue*)queue
@@ -73,21 +73,21 @@ NS_ASSUME_NONNULL_BEGIN
                                            NSArray<NSIndexPath*>*    _Nullable indexPaths))completion;
 
 /*--------------------------------------------------------------------------------------------------------------
- Вызывает сетевую операцию которая посылает запрос о разлогирование. Отчищает хранилище на диске устройства.
+Invokes a network operation that sends a logout request. Clear storage on device disk.
  --------------------------------------------------------------------------------------------------------------*/
 - (DTO*) logoutOpRunItself:(BOOL)runOpItself
                    onQueue:(nullable NSOperationQueue*)queue
                 completion:(nullable void(^)(void))completion;
 
 /*--------------------------------------------------------------------------------------------------------------
- Последовательно выполняет три сетевых операции (userInfoNetOp,userPhotoNetOp,userWallNetOp)
+ Performs three network operations in sequence (userInfoNetOp,userPhotoNetOp,userWallNetOp)
  --------------------------------------------------------------------------------------------------------------*/
 - (GO*) performNeededOperations:(void(^)(NSError* _Nullable error))completion;
 
 
 #pragma mark - Management of network operations
 /*--------------------------------------------------------------------------------------------------------------
- Отменяет все запущенные сетевые операции которые выполняются в очереди
+ Cancels all running network operations in the queue
  --------------------------------------------------------------------------------------------------------------*/
 - (void) cancelAllNetworkOperations;
 
@@ -95,7 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Initialization
 
 /*--------------------------------------------------------------------------------------------------------------
- Инициализирует viewModel с 'userID'. (Данные получает по результату выполнения сетевого запроса в будущем)
+  Initializes the viewModel with 'userID'. (The data is obtained by the result of a network request in the future)
  --------------------------------------------------------------------------------------------------------------*/
 + (UserProfileVM*) initWithUserID:(nullable NSString*)userID;
 

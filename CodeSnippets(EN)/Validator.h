@@ -13,40 +13,39 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /*--------------------------------------------------------------------------------------------------------------
-  Битовая маска, содержит настройки по которым будет валидироваться ответ сервера.
+  The bitmask contains the settings by which the server response will be validated.
  --------------------------------------------------------------------------------------------------------------*/
 typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
     
-    CheckOnKeys           = 1 << 0, // Проверяет наличие ключей из шаблона в полученном json от сервера
-    CheckSubEntityOnKeys  = 1 << 1, // Проверяет наличие ключей из шаблона во вложенных структурах
-    CheckOnTypesOfValues  = 1 << 2, // Проверяет соотвествие типов данных по ключам
-    CheckOnExtendedRules  = 1 << 3, // Осуществляет проверку на правила (если они были перечисленны в шаблоне)
+    CheckOnKeys           = 1 << 0, // Checks for the keys from the template in the received json from the server
+    CheckSubEntityOnKeys  = 1 << 1, // Checks for keys from a template in nested structures
+    CheckOnTypesOfValues  = 1 << 2, // Checks the correspondence of data types by keys
+    CheckOnExtendedRules  = 1 << 3, // Checks for rules (if they were listed in the template)
     
     AllChecks = CheckOnKeys | CheckSubEntityOnKeys | CheckOnTypesOfValues | CheckOnExtendedRules
 };
 
 
 /*--------------------------------------------------------------------------------------------------------------
- 🚦⚖️  'Validator' - валидирует ответы полученные от сервера
+ 🚦⚖️  'Validator' - validates responses received from the server
  ---------------
- Главная задача класса это найти возможные ошибки в полученном файле и уведомить об этом пользователя.
+ The main task of the class is to find possible errors in the resulting file and notify the user about it.
  ---------------
  [⚖️] Duties:
- - Владировать ответы от сервер по ключам методов API.
+ - Own responses from the server by API method keys.
  ---------------
  The class provides the following features:
  
- - Вы можете передать пару json+APIMethod в общий метод который самостятельно определит нужный метод валидации
-   и вернет вам результат.
+ - You can pass a json + APIMethod pair to a generic method that will automatically determine the required validation
+   method and will return the result to you.
  
- - Реализация методов валидации полностью зависит от потребностей разработчика.
-   Вы можете написать тут собственную кастомную проверку, а при наличии шаблона можете воспользоваться методом
-   автоматического тестирования.
+ - The implementation of validation methods is entirely up to the developer's needs.
+   You can write your own custom check here, and if you have a template, you can use the method automatic testing.
  ---------------
  Additionally:
- (⚠️) При использовании автоматической валидации объекты расположенные в массивах проверки не подлежат.
-      Если ваш ответ от сервера возвращает вам массив объектов, то для осуществляения валидации на диск в качестве
-      шаблона и в метод проверки всегда передавайте непосредственно объект.
+ (⚠️) When using automatic validation, objects located in arrays are not subject to verification.
+      If your response from the server returns you an array of objects, then to carry out validation to disk as
+      template and always pass the object directly to the validator.
  --------------------------------------------------------------------------------------------------------------*/
 
 
@@ -54,7 +53,7 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 
 #pragma mark - Shared Validation Methods
 /*--------------------------------------------------------------------------------------------------------------
- Метод распределитель, самостоятельно определяет какой метод валидации вызывать для json полученного по конкретнному методу API
+ The distributor method independently determines which validation method to call for json received by a specific API method
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponse:(NSDictionary*)recievedJSON fromAPIMethod:(APIMethod)method;
 
@@ -62,17 +61,17 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 
 #pragma mark - Automatic Validation (for pair json + template)
 /*--------------------------------------------------------------------------------------------------------------
- Метод автоматической валидации сверяет пришедший json и образец с диска.
- В случае нахождения несовпадений - возвращает ошибку.
+ The automatic validation method verifies the received json and the sample from disk.
+ If a mismatch is found, it returns an error.
  
- Стандартная процедура валидации заключается в нескольких действиях:
- 1. Проверка на наличие всех ключей из шаблона в json.
- 2. Проверка на идентичные типы данных (чтобы по одному и тому же ключу были был один тип).
+ The standard validation procedure consists of several steps:
+ 1. Checking for the presence of all keys from the template in json.
+ 2. Checking for identical data types (so that there is one type for the same key).
  
- (Дополнительно)
-  3. Если шаблон содержит "правила" валидации, они также будут выполненны.
-     Например можно валидировать какое-то конкретное значение из json на длину,соотвествие,суффиксу итд.
-     Для этого объект который вы хотите валидировать должен иметь словарь правил с его именем (напр: "age-Rules").
+ (Additionally)
+ 3. If the template contains validation "rules", they will also be executed.
+    For example, you can validate a specific value from json for length, match, suffix, etc.
+    To do this, the object you want to validate must have a rules dictionary with its name (eg: "age-Rules").
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) automaticValidateResponse:(NSDictionary*)recievedJSON
                                         template:(NSDictionary*)templateJSON
@@ -85,22 +84,22 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 #pragma mark - Specified Validation Method (for specific API method)
 
 /*--------------------------------------------------------------------------------------------------------------
-  Метод валидирует ответ сервера на запрос метода "users.get".
+  The method validates the server response to the "users.get" method request.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponseFrom_usersGet:(NSDictionary*)recievedJSON;
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод валидирует ответ сервера на запрос метода "wall.get".
+ The method validates the server response to the request for the "wall.get" method.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponseFrom_wallGet:(NSDictionary*)recievedJSON;
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод валидирует ответ сервера на запрос метода "photos.getAll".
+ The method validates the server response to the "photos.getAll" method request.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponseFrom_photosGetAll:(NSDictionary*)recievedJSON;
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод валидирует ответ сервера на запрос метода "friends.get".
+ The method validates the server response to the "friends.get" method request.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponseFrom_friendsGet:(NSDictionary*)recievedJSON;
 
@@ -111,13 +110,13 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 /*--------------------------------------------------------------------------------------------------------------
  | 📄⚙️ Instructions for supporting extended validation parameters.
  ---------------------------------------------------------------------------------------------------------------
- | ✋🏻 Введение: |
+ | ✋🏻 Introduction: |
  ---------------
  
-  Если вы хотите валидировать полученный ответ от сервера дополнительными инструментами, то создайте в шаблоне
-  словарь с правилами. Ключ к правилам должен содержать имя объекта валидации и суффикс '-Rules' на конце.
+  If you want to validate the received response from the server with additional tools, then create in the template
+  dictionary with rules. The key to the rules must contain the name of the validation object and the suffix '-Rules' at the end.
  
-  Пример:
+  Example:
   (Template.json)
   {
     ....
@@ -127,19 +126,18 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
                     }
      ...
   }
-  Получив данный словарь с правилами, алгоритм будет проверять значение, чтобы оно находилось в диапазоне 18-27.
+ Having received this dictionary with rules, the algorithm will check the value so that it is in the range 18-27.
   -----------------------------------------------------------------------------------------------------------
- | 📚 Общие правила для всех типов данных: |
+ | 📚 General rules for all data types: |
  -------------------------------------------
  
-  👉🏻 "isOptional" - (По-умолчанию отсутствие ключа из шаблона в ответе сервера - воспринимается алгоритмом как ошибка).
-                     Значение 'true' для этого ключа будет говорить алгоритму, что наличие пары (ключ-значение)
-                     для этого json объекта - является необязательным.
+  👉🏻 "isOptional" - (By default, the absence of a key from the template in the server response is perceived by the algorithm as an error).
+                     A `true` for this key will tell the algorithm that the presence of a (key-value) pair for this `json` object - is optional.
  
-  👉🏻 "mustMatch"  - Значение 'true' требует соотвествия значения переменной из шаблона, с тем что пришло с сервера.
-                    Данный ключ применим ко всем следующим типа данных (Strings/Numbers/Dictionaries/Arrays).
+  👉🏻 "mustMatch"  - The value `true` requires that the value of the variable from the template match the one that came from the server.
+                    This key applies to all of the following data types (Strings/Numbers/Dictionaries/Arrays).
  
-  Пример:
+  Example:
   (Template.json)
   {
      "favouriteFilm"         : "Avatar 2010",
@@ -153,21 +151,22 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
                            }
   }
  
-  В примере выше показанно что в поле "favouriteFilm" в json полученным от сервера - может отсуствтовать.
-  А поле "jurisdiction" из json должно полностью совпадать со значением в шаблоне, то есть "US".
+  As we can see from the template below, the presence of a value for the `favoriteFilm` key in the response received from the server is optional.
+  And the value for the `jurisdiction` key, not only must be present in the server's response, but the value must necessarily be equal
+  to the value from the rules dictionary, that is, `US`.
  -----------------------------------------------------------------------------------------------------------
  | "🅰️🅱️" Strings: |
  ---------------
-  Ключи расположенные ниже валидируют только строковые значения.
+  The keys below validate only string values.
  
-  👉🏻 "equalInLength"                  - Следит за тем чтобы длина строки в шаблоне и в json была одинакова.
-  👉🏻 "lengthMustBeEqualOrGreaterThan" - Длина значения в json должна быть больше или равна этой цифре.
-  👉🏻 "lengthMustBeEqualOrLessThan"    - Длина значения в json должна быть меньше или равна этой цифре.
-  👉🏻 "hasSuffix"                      - Значение в json должно содержать данный суффикс.
-  👉🏻 "matchWithOneOf"                 - Значение в json должно быть индентичным одному из объектов в массиве.
+  👉🏻 "equalInLength"                  - Makes sure that the length of the string in the template and in json is the same.
+  👉🏻 "lengthMustBeEqualOrGreaterThan" - The length of the value in json must be greater than or equal to this digit.
+  👉🏻 "lengthMustBeEqualOrLessThan"    - The length of the value in json must be greater than or equal to this digit.
+  👉🏻 "hasSuffix"                      - The value in json must contain this suffix.
+  👉🏻 "matchWithOneOf"                 - The value in json must be indentical to one of the objects in the array.
  
  
-  Пример:
+  Example:
   (Template.json)
   {
    "crediCardPassCode"       : "4321",
@@ -195,13 +194,13 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
  -----------------------------------------------------------------------------------------------------------
  | [🍏 🍎 🍊] Arrays: |
  ---------------
-  По мимо базовых ключей (isOptional и mustMatch) массивы поддерживают еще два других.
-  В примере ниже показана ситуация когда требуется чтобы количество элементов в массиве находилось в определенном диапазоне.
+ In addition to the basic keys (isOptional and mustMatch), arrays support two others.
+ The example below shows the situation when the number of elements in the array is required to be in a certain range.
 
-  👉🏻 "elementsMustBeEqualOrMoreThan" - Количество элементов в массиве должно быть больше или равно этой цифре.
-  👉🏻 "elementsMustBeEqualOrLessThan" - Количество элементов в массиве должно быть меньше или равно этой цифре.
+  👉🏻 "elementsMustBeEqualOrMoreThan" - The number of elements in the array must be greater than or equal to this number.
+  👉🏻 "elementsMustBeEqualOrLessThan" - The number of elements in the array must be less than or equal to this number.
  
- Пример:
+ Example:
  (Template.json)
  {
  
@@ -217,10 +216,10 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
  -----------------------------------------------------------------------------------------------------------
  | 📖 Dictionaries: |
  --------------------
-  Сами по себе словари могут иметь только два базовых параметра валидации (isOptional и mustMatch), в остальном
-  нужно задавать конкретные правила для каждого отдельного объекта внутри словаря.
+ By themselves, dictionaries can only have two basic validation parameters (isOptional and mustMatch), otherwise
+ you need to set specific rules for each individual object within the dictionary.
  
-  Пример:
+  Example:
   (Template.json)
   {
    "platform"  :  {
@@ -234,21 +233,21 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
                       }
   }
  
-  Пример выше показывает, что отсуствие словаря "platform" в пришедшем с сервера джейсоне не будет считаться ошибкой,
-  но если словарь будет присутствовать, то он должен быть идентичен словарю из шаблона.
+ The example above shows that the absence of the "platform" dictionary in the Jason that came from the server will
+ not be considered an error, but if the dictionary is present, then it must be identical to the dictionary from the template.
  -----------------------------------------------------------------------------------------------------------
  | 1️⃣ 2️⃣ 3️⃣ Number: |
  --------------------
-  Как было показано в введении, числовые значения из json поддерживают только валидацию на минимальное и
-  максимальное значение.
+ As shown in the introduction, numeric values from json only support validation for min and
+ maximum value.
 
-  (⚠️) Булевые переменные не поддерживают валидацию.
+  (⚠️) Booleans do not support validation. maximum value.
  -----------------------------------------------------------------------------------------------------------
- | 🛣🗿 Дополнительно: |
+ | 🛣🗿 Additionally: |
  -----------------------
  
- - Если на диске у вас имеется json-образец, а с сервера приходит модифицированная версия.
-   То ошибок не будет если вы не будете менять стркутру старых объектов, а просто добавите еще что-то новое.
+ - If you have a json sample on disk, and a modified version comes from the server.
+ Then there will be no errors if you do not change the structure of old objects, but simply add something else new.
  --------------------------------------------------------------------------------------------------------------*/
 
 

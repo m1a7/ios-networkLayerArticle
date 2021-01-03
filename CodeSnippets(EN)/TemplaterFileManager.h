@@ -197,30 +197,30 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
- (🤙🏻🛠) Работа с Templater и  TemplaterFileManager. Пример использования:
+ (🤙🏻🛠) Working with Templater and TemplaterFileManager. Usage example:
  
- //==================================== Загрузка из bundle по NSString ========================================//
+ //==================================== Loading from bundle by NSString ========================================//
  
  NSString *path = [[NSBundle mainBundle] pathForResource:@"users.get" ofType:@"json"];
  NSData   *data = [NSData dataWithContentsOfFile:path];
  NSDictionary* json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
  NSLog(@"json %@",json);
  
- //==================================== Загрузка из bundle по NSURL ========================================//
+ //==================================== = Loading from bundle by NSURL ========================================//
  
  NSURL  *urlForPath = [[NSBundle mainBundle] URLForResource:@"users.get" withExtension:@"json"];
  NSData *data       = [NSData dataWithContentsOfURL:urlForPath];
  NSDictionary* json = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
  NSLog(@"json %@",json);
  
- //======================= Разархивирование APIManagerResponseDefaultTemplates.zip  =========================//
+ //======================= Unzipping APIManagerResponseDefaultTemplates.zip  =========================//
  
  [Templater unarchiveFolderWithDefaultTemplates:nil completion:^(NSError * _Nonnull error) {
      if (error) NSLog(@"error: %@",error);
-     else NSLog(@"Все нормально");
+     else NSLog(@"All right");
  }];
  
- //==================================== Запись  ========================================//
+ //==================================== Writing  ========================================//
  
  NSDictionary* myPrettyJSON = @{@"Hello" : @"World"};
  
@@ -236,22 +236,21 @@
  recoveredJSON = [Templater templateForAPIMethod:APIMethod_UserGet];
  NSLog(@"recoveredJSON: %@",recoveredJSON);
  
- //==================================== Перемещение  ========================================//
+ //==================================== Moving  ========================================//
  
- // Распечатываем текущий путь
+ // Print out the current path
  NSLog(@"Текущий путь: %@",Templater.pathToTemplateDirectory);
  
- // Меняем путь
+ // Changing the path
  // NSDocumentDirectory NSLibraryDirectory
  NSString* pathToLibraryCaches = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask,YES) firstObject];
  
- // !! В перемещении ошибка!
  [Templater setNewPathToTemplateDirectory:pathToLibraryCaches];
  
- // Проверяем изменился ли путь и фактический переместились ли папки
+ // Check if the path has changed and the actual folders have moved
  NSLog(@"Изменнный путь: %@",Templater.pathToTemplateDirectory);
  
- //==================================== Удаление  ========================================//
+ //==================================== Removing  ========================================//
  
  
  //NSError* error = [Templater removeTemplateForAPIMethod:APIMethod_UserGet];

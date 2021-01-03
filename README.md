@@ -2140,7 +2140,7 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
    Постепенный отказ от гуглинга каждодневных проблем по типу `NSAppTransportSecurity`, в сумме экономит приличное количество времени.
    
     <p align="center">
-      <img src="Documentation/Carbon-Screens/scheme10.png">
+      <img src="Documentation/Carbon-Screens/scheme10.png" width="959">
     </p>
 
 **Доклады**

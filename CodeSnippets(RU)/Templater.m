@@ -107,7 +107,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 #pragma mark - Templates
 
 /*--------------------------------------------------------------------------------------------------------------
- Востанавливает ранее записанный json файл с диска или возвращает его из RAM памяти.
+Восстанавливает ранее записанный json файл с диска или возвращает его из RAM памяти.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSDictionary*) templateForAPIMethod:(APIMethod)method
 {
@@ -215,7 +215,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Позволяет безопастно удалить папку со всеми шаблонами одновременно
+ Позволяет безопасно удалить папку со всеми шаблонами одновременно
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSError*) removeAllTemplates
 {
@@ -361,7 +361,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
           _pathToTemplateDirectory = [Templater fullPathFromUserDefault];
     }
     
-    // Если в UserDefault ничего не было, то устанавливаем занчение по-умолчанию и записываем
+    // Если в UserDefault ничего не было, то устанавливаем значение по-умолчанию и записываем
     if (!_pathToTemplateDirectory){
         
         NSString* pathToLibraryCaches = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask,YES) firstObject];
@@ -498,7 +498,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
         return;
     }
     
-    // Разрахивируем архив
+    // Разархивируем архив
     [SSZipArchive unzipFileAtPath:localPathAtZip
                     toDestination:atPath
                   progressHandler:^(NSString * _Nonnull entry, unz_file_info zipInfo, long entryNumber, long total) {
@@ -510,7 +510,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
                       }else if (succeeded){
                           if (completion) completion(nil);
                           
-                          // Записываем флаг говорящий о том, что разрахивация была проведена
+                          // Записываем флаг говорящий о том, что разархивация была проведена
                           [[NSUserDefaults standardUserDefaults] setBool:YES forKey:wasArchiveExtractedUserDefaultKey];
                           [[NSUserDefaults standardUserDefaults] synchronize];
                       }
@@ -520,7 +520,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Оберзает длинный путь, возвращая только 'Documents/APIManagerResponseTemplates'
+Обрезает длинный путь, возвращая только 'Documents/API Manager Response Templates'
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSString*) cutShortPathFrom:(NSString*)fullPath
 {

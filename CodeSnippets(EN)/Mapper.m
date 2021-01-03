@@ -26,18 +26,17 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
- 📄 ➡️ 💾  'Mapper' - класс созданый для сборки моделей данных из json файлов
+ 📄 ➡️ 💾  'Mapper' - builds data models from json files.
  ---------------
- Главная задача класса это декомпозировать 'APIManager', вынося из него код парсинга и маппинга моделей.
+ The main task of the class is to decompose the 'APIManager', taking out the code for parsing and mapping models from it.
  ---------------
  [⚖️] Duties:
- - Создавать модели данных из полученного json.
+ - Create data models from the received json.
  --------------------------------------------------------------------------------------------------------------*/
-
 @implementation Mapper
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает массив объектов содержащих детальную информацию о пользователях.
+ Returns an array of objects containing detailed information about users.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSArray<UserProfile*>*) usersGetFromJSON:(NSDictionary*)json error:(NSError*_Nullable* _Nullable)error
 {
@@ -50,7 +49,7 @@
 }
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает массив записей со стены пользователя или сообщества.
+ Returns an array of posts from a user's or community's wall.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSArray<WallPost*>*) wallPostsFromJSON:(NSDictionary*)json error:(NSError*_Nullable* _Nullable)error
 {
@@ -59,20 +58,20 @@
     FEMMapping*     objectMapping = [WallPost defaultMapping];
     NSArray<WallPost*>* wallPosts = [FEMDeserializer collectionFromRepresentation:json[@"items"] mapping:objectMapping];
     
-    // Теперь нужно проинициализировать авторов постов.
+    // Now we need to initialize the authors of the posts.
     NSArray* profiles = json[@"profiles"];
     NSArray* groups   = json[@"groups"];
 
     for (WallPost* post in wallPosts)
     {
-        // Пост был опубликован от имени пользователя
+        // The post was published on behalf of the user
         if (post.fromID > 0){
             NSDictionary* ownerDict        = [Mapper postOwnerByID:post.fromID inCollection:profiles];
             FEMMapping*   userOwnerMapping = [UserOwnerPost defaultMapping];
             UserOwnerPost* userOwnerPost = [FEMDeserializer objectFromRepresentation:ownerDict mapping:userOwnerMapping];
             post.owner = userOwnerPost;
         }
-        // Пост был опубликован от имени группы
+        // The post was published on behalf of the group
         else if (post.fromID < 0){
             NSDictionary* ownerDict = [Mapper postOwnerByID:post.fromID inCollection:groups];
             FEMMapping*   groupOwnerMapping = [GroupOwnerPost defaultMapping];
@@ -86,7 +85,7 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает все фотографии пользователя или сообщества в антихронологическом порядке.
+ Returns all photos of a user or community in anti-chronological order.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSArray<Photo*>*)  photosGetAllFromJSON:(NSDictionary*)json error:(NSError*_Nullable* _Nullable)error
 {
@@ -100,7 +99,7 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает все фотографии пользователя или сообщества в антихронологическом порядке.
+ Returns all photos of a user or community in anti-chronological order.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable PhotoGalleryCollection*)  photosCollectionFromJSON:(NSDictionary*)json error:(NSError*_Nullable* _Nullable)error
 {
@@ -115,7 +114,7 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
-Возвращает список идентификаторов друзей пользователя или расширенную информацию о друзьях пользователя
+ Returns a list of user friend ids or extended information about user friends
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSArray<Friend*>*) friendsFromJSON:(NSDictionary*)json error:(NSError*_Nullable* _Nullable)error
 {
@@ -131,15 +130,15 @@
 #pragma mark - Helpers
 
 /*--------------------------------------------------------------------------------------------------------------
-  [Вспомогательный метод] Помогает вычленять 'id' собственника поста на стене.
+  [Helper] Helps isolate the 'id' of the owner of the post on the wall.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSDictionary*) postOwnerByID:(NSInteger)fromID inCollection:(NSArray<NSDictionary*>*)collection
 {
-    // В 'collection' приходит либо массив 'profiles' либо 'groups'.
-    // И этот метод должен найти словарь который содержит идентичный 'from_id'
+    // Either the 'profiles' or 'groups' array comes to 'collection'.
+    // And this method must find a dictionary that contains the identical 'from_id'
     
-    // Конвертируем отрицательно число в положительное.
-    // Потому что в этих массивах вне зависимости от того пользователь или группа, у всех id будет положительным
+    // Convert a negative number to a positive one.
+    // Because in these arrays, regardless of whether the user or the group, all id will be positive
     if (fromID < 0) fromID *= -1;
     
     NSDictionary* neededDictionary = nil;

@@ -78,16 +78,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает результат соединения двух строк. 'baseURL' и значение из аргумента 'method'.
+ Returns the result of joining two strings. 'baseURL' and the value from the 'method' argument.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSString*) baseURLappend:(NSString*)method;
 
 
 #pragma mark - Customization
 /*--------------------------------------------------------------------------------------------------------------
- Метод создан для возможности дополнительной настройки 'APIManager'a перед использованием.
- Например вы хотите задать некие дополнительные пользовательские параметры.
- В можете сделать это, вызывав данный метод внутри 'didFinishLaunchingWithOptions:..'.
+ The method was created to allow additional configuration of 'APIManager' before use.
+ For example, you want to set some additional custom parameters.
+ You can do this by calling this method inside 'didFinishLaunchingWithOptions:..'.
  --------------------------------------------------------------------------------------------------------------*/
 + (void) prepareAPIManagerBeforeUsing:(nullable void(^)(void))completion;
 
@@ -115,7 +115,7 @@ NS_ASSUME_NONNULL_BEGIN
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает массив информации о пользователях
+ Returns an array of information about users
  --------------------------------------------------------------------------------------------------------------*/
 + (DTO*) usersGet:(NSArray<NSString*>*)userIDs
            fields:(NSArray<NSString*>* _Nullable)fields
@@ -123,7 +123,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает все фотографии пользователя или сообщества в антихронологическом порядке.
+ Returns all photos of a user or community in anti-chronological order.
  --------------------------------------------------------------------------------------------------------------*/
 + (DTO*) photosCollectionFromID:(nullable NSString*)ownerID
                          offset:(NSInteger)offset
@@ -131,7 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
                      completion:(nullable void(^)(PhotoGalleryCollection* _Nullable photoCollection, BO* op))completion;
 
 /*--------------------------------------------------------------------------------------------------------------
- Возвращает массив записей со стены пользователя или сообщества
+ Returns an array of posts from a user or community wall
  --------------------------------------------------------------------------------------------------------------*/
 + (DTO*) wallGet:(nullable NSString*)ownerID
           offset:(NSInteger)offset
@@ -141,7 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Позволяет создать запись на стене. Метод принимает массив attachments и самостоятельно выгружает их по одиночке.
+Allows you to create a post on the wall. The method takes an array of attachments and unloads them one at a time.
  --------------------------------------------------------------------------------------------------------------*/
 + (GO*) wallPost:(nullable NSString*)ownerID
          message:(nullable NSString*)message
@@ -151,7 +151,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Позволяет создать запись на стене. Метод принимает строку attachments (то есть требует адресса уже загруженного контента)
+  Allows you to create a post on the wall. The method accepts the attachments string
+  (that is, it requires the address of the already loaded content)
  --------------------------------------------------------------------------------------------------------------*/
 + (DTO*) wallPost:(nullable NSString*)ownerID
           message:(nullable NSString*)message
@@ -161,8 +162,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод загружает массив изображений на сервер.
- Ограничения: не более 6 фотографий за один раз в методе.
+ The method uploads an array of images to the server.
+ Limitations: no more than 6 photos at a time in the method.
  --------------------------------------------------------------------------------------------------------------*/
 + (GO*) uploadImages:(NSArray<NSData*>*)imagesData
               userID:(nullable NSString*)userID
@@ -255,18 +256,18 @@ NS_ASSUME_NONNULL_BEGIN
 ///////////////////////////////////////////////////////////////////////////////
 
 /*--------------------------------------------------------------------------------------------------------------
- Ниже будут представленны методы который позволяют сократить синтаксис кода при работе с сетевым слоем.
+ Below will be presented methods that allow you to reduce the syntax of the code when working with the network layer.
  --------------------------------------------------------------------------------------------------------------*/
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод вызывается внутри групповых операций, чтобы прекращать выполнение последующих операций если текущая была
- завершена с ошибкой. Метод вызывает переданный 'completion' блок если операция содержит 'error'.
+ The method is called inside group operations to stop performing subsequent operations if the current one was
+ completed with an error. The method calls the given 'completion' block if the operation contains 'error'.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError*) callCompletion:(nullable void(^)(NSError* _Nullable error))completion ifOccuredErrorInOperation:(BO*)op;
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод создан для сокращения синтаксиса.
- Вызывается внутри 'completion' блоков методов класса APIManager.
+ The method was created to shorten the syntax.
+ Called inside the 'completion' method blocks of the APIManager class.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSError*) callCompletionWithTwoArg:(nullable void(^)(NSError* _Nullable error, id _Nullable arg1))completion ifOccuredErrorInOperation:(BO*)op;
 

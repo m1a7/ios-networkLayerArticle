@@ -10,13 +10,13 @@
 #define APIMethods_h
 
 /*--------------------------------------------------------------------------------------------------------------
- (📄) File 'APIMethods.h' - содержит перечисления API методов которые поддерживает 'APIManager'
+ (📄) File 'APIMethods.h' - contains enumerations of API methods that 'APIManager' supports
  --------------------------------------------------------------------------------------------------------------*/
 
 #pragma mark - Enum API Part
 /*--------------------------------------------------------------------------------------------------------------
- Перечисления API методов которые поддерживает 'APIManager'.
- Используются для удобства в 'NetworkRequestConstructor' в качестве аргументов для функций построения запросов.
+ API enumerations of methods supported by 'APIManager'.
+ Used for convenience in 'NetworkRequestConstructor' as arguments to query building functions.
  --------------------------------------------------------------------------------------------------------------*/
 typedef NS_ENUM(NSInteger, APIMethod) {
     
@@ -37,19 +37,19 @@ typedef NS_ENUM(NSInteger, APIMethod) {
 
 #pragma mark - String Constants API Part
 /*--------------------------------------------------------------------------------------------------------------
-  Строковые константы содержащие название EndPoint название API-методов.
-  Используются конструктором 'NetworkRequestConstructor' при построении NSURLRequest.
+ String constants containing the name EndPoint and the name of the API methods.
+ Used by the 'NetworkRequestConstructor' constructor when constructing the NSURLRequest.
  --------------------------------------------------------------------------------------------------------------*/
-static NSString *const usersGet = @"users.get"; // Возвращает расширенную информацию о пользователях.
-static NSString *const wallGet  = @"wall.get";  // Возвращает записи со стены пользователей
-static NSString *const wallPost = @"wall.post"; // Позволяет создать запись на стене,
+static NSString *const usersGet = @"users.get"; // Returns extended information about users.
+static NSString *const wallGet  = @"wall.get";  // Returns entries from users' wall
+static NSString *const wallPost = @"wall.post"; // Lets you create a post on the wall
 
-static NSString *const photosGetAll  = @"photos.getAll"; // Возвращает все фотографии пользователя или сообщества в антихронологическом порядке.
-static NSString *const friendsGet    = @"friends.get";   // Возвращает список идентификаторов друзей пользователя или расширенную информацию о друзьях пользователя
+static NSString *const photosGetAll  = @"photos.getAll"; // Returns all photos of a user or community in anti-chronological order.
+static NSString *const friendsGet    = @"friends.get";   // Returns a list of user friend ids or extended information about user friends
 
 
-static NSString *const photosGetWallUploadServer = @"photos.getWallUploadServer"; // Возвращает адрес сервера для загрузки фотографии на стену пользователя или сообщества.
-static NSString *const photosSaveWallPhoto       = @"photos.saveWallPhoto";       // Сохраняет фотографии после успешной загрузки на URI, полученный методом
+static NSString *const photosGetWallUploadServer = @"photos.getWallUploadServer"; // Returns the server address for uploading a photo to a user or community wall.
+static NSString *const photosSaveWallPhoto       = @"photos.saveWallPhoto";       // Saves photos after successful upload to the URI obtained by the method
 
 static NSString *const logout = @"auth.logout";
 

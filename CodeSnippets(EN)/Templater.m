@@ -22,58 +22,59 @@ static NSString *const wasArchiveExtractedUserDefaultKey = @"wasArchiveExtracted
 
 
 /*--------------------------------------------------------------------------------------------------------------
- 🖨🧾 'Templater' - восстанавливает образцы ответов сервера в формате .json с диска устройства.
+ 🖨🧾 'Templater' - restores sample server responses in .json format from the device disk.
  ---------------
- Главная задача предоставлять пользователю экземпляры NSDictionary инициализированные с помощью json файлов
- хранящихся на диске.
+ The main task is to provide the user with NSDictionary instances initialized using json files
+ stored on disk.
  ---------------
  [⚖️] Duties:
- - Взаимодействовать с классом 'TemplaterFileManager' который осуществляет управление песочницей.
- - Записывать/Читать значения из NSUserDefault.
- - Осуществлять работу со строками (редактирование путей для папок в песочнице).
+ - Interact with the 'TemplaterFileManager' class that manages the sandbox.
+ - Write / Read values from NSUserDefault.
+ - Work with strings (editing paths for folders in the sandbox).
  ---------------
  The class provides the following features:
- - Инициализировать словари из json файлов находящихся в песочнице приложения.
- - Записывать шаблоны в песочницу по имени API метода, по которому был совершен запрос.
- - Удалять конкретный шаблон, по имени API метода, по которому был совершен запрос.
- - Удалять все шаблоны с диска.
- - Возможность безопастно перемещать папку с шаблонами в другие лоакции.
+ - Initialize dictionaries from json files located in the application sandbox.
+ - Sandbox templates by the API name of the request method.
+ - Remove a specific template by the API name of the method that was requested.
+ - Delete all templates from disk.
+ - Ability to safely move the template folder to other locations.
  ---------------
  Additionally:
- (⚠️) Архитектура класса была спланирована таким образом, чтобы во время использования приложения, можно было
-      динмачески добавлять новые и изменять старые шаблоны.
- Такая возможность имеется только при работе с песочницей, поскольку в bundle приложения файлы добавить кодом нельзя.
+ (⚠️) The architecture of the class was planned in such a way that while using the application, it was possible to
+ dynamically add new and change old templates.
+ This feature is available only when working with a sandbox, since you cannot add files to the application bundle with code.
  
- Из этого следует следующая проблема, -"Откуда Templater должен брать файлы для Валидатора, если только что скаченное
- приложения из AppStore имеет чистую песочницу ?".
+ This leads to the following problem, - "Where should Templater take files for the Validator, if the just downloaded
+ does the app from the AppStore have a clean sandbox? "
  
- Одним из возможных решения может быть сохранение архива шаблонов с именем 'APIManagerResponseDefaultTemplates.zip'
- в bundle приложения, а затем во время первого запуска нужно вызывать метод +unarchiveFolderWithDefaultTemplates:..,
- который разархивиет папку в нужную директорию (по умолчанию в 'pathToTemplateDirectory').
+ One possible solution could be to save a template archive with the name 'APIManagerResponseDefaultTemplates.zip'
+ in the bundle of the application, and then during the first launch, you need to call the unarchiveFolderWithDefaultTemplates: .. method,
+ which will unzip the folder to the desired directory (by default in 'pathToTemplateDirectory').
  
- В последующим использовании приложения вы получать json файлы с диска, а также модифицировать их.
+ In the subsequent use of the application, you get json files from disk, and also modify them.
  --------------------------------------------------------------------------------------------------------------*/
+
 
 
 @interface Templater ()
 
 /*--------------------------------------------------------------------------------------------------------------
- Переменная содержит путь к папке 'APIManagerResponseTemplates' на диске устройства.
- Если вы вызовите переменную впервый раз, то внутренний алгоритм автоматически создаст папку на диске.
- Если вы захотите переместить папку в другое место, вызовите метод +setNewPathToTemplateDirectory:
+ The variable contains the path to the 'APIManagerResponseTemplates' folder on the device drive.
+ The first time you call the variable, the internal algorithm will automatically create a folder on disk.
+ If you want to move the folder to a different location, call the setNewPathToTemplateDirectory method:
  --------------------------------------------------------------------------------------------------------------*/
 @property (atomic, strong, readwrite, class) NSString* pathToTemplateDirectory;
 
 /*--------------------------------------------------------------------------------------------------------------
- Словарь содержит в себе ранне загруженные json файлы по ключам apiMethod.
- После первой загрузки с диска, шаблон автоматический добавлется в словарь.
+ The dictionary contains the early loaded json files using the apiMethod keys.
+ After the first boot from disk, the template is automatically added to the dictionary.
  --------------------------------------------------------------------------------------------------------------*/
 @property (atomic, strong, class) NSMutableDictionary<NSString*,NSDictionary*>* templates;
 
 /*--------------------------------------------------------------------------------------------------------------
- Последовательная очередь, которая непозволяет совершить изменения значения в проперти 'pathToTemplateDirectory'
- и последующего переноса папки с шаблонами в другую директорию.
- Методы перечисленные ниже выполняют свой код внутри блок который вставляется в данную очередь.
+ Serial queue that does not allow changes to the value in property 'pathToTemplateDirectory'
+ and then moving the folder with templates to another directory.
+ The methods listed below execute their code inside the block that is inserted into this queue.
  
  +templateForAPIMethod:
  +writeTemplate:forAPIMethod:
@@ -107,7 +108,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 #pragma mark - Templates
 
 /*--------------------------------------------------------------------------------------------------------------
- Востанавливает ранее записанный json файл с диска или возвращает его из RAM памяти.
+Recovers a previously written json file from disk or returns it from RAM memory.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSDictionary*) templateForAPIMethod:(APIMethod)method
 {
@@ -120,18 +121,18 @@ static BOOL                 _loadTemplateFromBundle  = NO;
         }
         NSString* apiMethod = [APIManager convertAPIMethodToString:method];
 
-        // Если шаблон ранее инициализировался с диска, то пытаемся достать его из RAM
+        // If the template was previously initialized from disk, then we try to get it from RAM
            template = self.templates[apiMethod];
         if (template) return;
         
         NSData* data =  nil;
        
         if (self.loadTemplateFromBundle){
-            // Загрузка с Bundle
+            // Load from Bundle
             NSString *localPathBundle = [[NSBundle mainBundle] pathForResource:apiMethod ofType:@"json"];
             data = [NSData dataWithContentsOfFile:localPathBundle];
         } else {
-           //  Загрузка с диска
+           //  Load from disk
             NSString* localPath = [NSString stringWithFormat:@"%@/%@.json",self.pathToTemplateDirectory,apiMethod];
            data = [NSData dataWithContentsOfFile:localPath];
         }
@@ -143,7 +144,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
         if (error){
             NSLog(@"+templateForAPIMethod recovered invalid error from disk. By APIMethod(%@)| error: %@",apiMethod,error);
         }
-        // Заносим в RAM память
+        // put in RAM memory
         if ((template) && (!error)){
             [self.templates setObject:template forKey:apiMethod];
         }
@@ -153,7 +154,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Записывает образец файла с именем API метода
+   Writes a sample file named method API
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSError*) writeTemplate:(NSDictionary*)template forAPIMethod:(APIMethod)method
 {
@@ -178,8 +179,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
         [jsonData writeToFile:localPath atomically:YES];
         
  
-        // Если по ключу 'apiMethod' в словаре 'templates' уже хранился образец,
-        // то его нужно обновить
+        // If a sample was already stored by the 'apiMethod' key in the 'templates' dictionary, then it needs to be updated
         if (self.templates[apiMethod]){
             self.templates[apiMethod] = template;
         }
@@ -189,7 +189,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Удаляет образец файла с диска и из RAM по имени API метода
+Removes sample file from disk and from RAM by method API name
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSError*) removeTemplateForAPIMethod:(APIMethod)method
 {
@@ -203,11 +203,11 @@ static BOOL                 _loadTemplateFromBundle  = NO;
         }
         NSString* apiMethod = [APIManager convertAPIMethodToString:method];
         
-        // Удаляем с диска
+        // Remove from disk
         NSString* localPath = [NSString stringWithFormat:@"%@/%@.json",self.pathToTemplateDirectory,apiMethod];
         [TemplaterFileManager removeItemAtPath:localPath error:&error];
 
-        // Удаляем из RAM
+        // Remove from RAM
         [self.templates removeObjectForKey:apiMethod];
     });
     return error;
@@ -215,7 +215,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Позволяет безопастно удалить папку со всеми шаблонами одновременно
+  Allows you to safely delete a folder with all templates at the same time
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSError*) removeAllTemplates
 {
@@ -242,7 +242,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 #pragma mark - Sandbox
 
 /*--------------------------------------------------------------------------------------------------------------
- Создает папку если она не существует по переданному пути
+ Creates a folder if it does not exist at the given path
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSError*) createFolderIfItDoesntExitByPath:(NSString*)pathToFolder
 {
@@ -257,7 +257,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 }
 
 /*--------------------------------------------------------------------------------------------------------------
-  Перемещает папку 'APIManagerResponseTemplates' по новому адресу
+  Moves the 'APIManagerResponseTemplates' folder to a new location
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSError*) replaceTemplateDirectoryAtPath:(NSString*)path
 {
@@ -339,9 +339,9 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
-  Метод позволяет изменить расположение папки с шаблонами.
-  Блок 'dispatch_barrier_sync' позволяет сначала дождаться выполениния всех остальных операций, а потом выполнить
-  переименования.
+ The method allows you to change the location of the folder with templates.
+ The 'dispatch_barrier_sync' block allows you to first wait for all other operations to complete, and then execute
+ renaming.
  --------------------------------------------------------------------------------------------------------------*/
 + (void) setNewPathToTemplateDirectory:(NSString*)path
 {
@@ -356,12 +356,12 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 + (NSString *)pathToTemplateDirectory
 {
-    // Восстанавливаем из UserDefault
+    // Recovers from UserDefault
     if ((!_pathToTemplateDirectory) && ([Templater shortPathFromUserDefault].length > 0)) {
           _pathToTemplateDirectory = [Templater fullPathFromUserDefault];
     }
     
-    // Если в UserDefault ничего не было, то устанавливаем занчение по-умолчанию и записываем
+    // If there was nothing in UserDefault, then set the default value and write
     if (!_pathToTemplateDirectory){
         
         NSString* pathToLibraryCaches = [NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask,YES) firstObject];
@@ -380,8 +380,8 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Сюда должен приходить целый путь ДО папки, например:
- '/Users/Containers/Data/Application/.../Library/' имя 'APIManagerResponseTemplates' будет подставленно автоматически.
+ The whole path BEFORE the folder should come here, for example:
+ '/Users/Containers/Data/Application/.../Library/' the name 'APIManagerResponseTemplates' will be substituted automatically.
  --------------------------------------------------------------------------------------------------------------*/
 + (void)setPathToTemplateDirectory:(NSString*)pathToTemplateDirectory
 {
@@ -393,22 +393,22 @@ static BOOL                 _loadTemplateFromBundle  = NO;
     NSString* fullPath        = [Templater buildFullPathFrom:pathToTemplateDirectory];
     NSString* shortPathFromUD = [Templater shortPathFromUserDefault];
     
-    // Если проперти уже имеет значение
+    // If the property already matters
     if ((_pathToTemplateDirectory.length > 0) && (fullPath.length > 0))
     {
-        // Тогда проверяем что-бы значения были не одинаковые
+        // Then we check that the values are not the same
         if ([_pathToTemplateDirectory isEqualToString:fullPath]){
-            // Если значения одинаковые то прерываем выполнение
+            //If the values are the same, then we interrupt the execution
             return;
         } else {
-            // Если значения разные. То:
-            // 1. Перенести папку из старой локации в новую
-            // 2. Записать новый путь в UserDefault
+            // If the values are different. Then:
+            // 1. Move a folder from an old location to a new one
+            // 2. Write new path to UserDefault
             NSError* error = [Templater replaceTemplateDirectoryAtPath:fullPath];
             //[TemplaterFileManager moveItemAtPath:_pathToTemplateDirectory toPath:fullPath error:&error];
             if (error) NSLog(@"error: %@",error);
             else {
-                // и записываем новое значение в UserDefault
+                //and write the new value to UserDefault
                 [Templater saveAnyPathToUserDefault:fullPath];
             }
             _pathToTemplateDirectory = fullPath;
@@ -416,7 +416,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
         return;
     }
 
-    // Если в UserDefault что-то было. И значение из аргумента полностью индетично, то устанавливаем значение и выходим
+    // If there was something in UserDefault. And the value from the argument is completely indeterminate, then we set the value and exit
     if ([[Templater cutShortPathFrom:fullPath] isEqualToString:[Templater shortPathFromUserDefault]])
     {
         _pathToTemplateDirectory = fullPath;
@@ -424,22 +424,22 @@ static BOOL                 _loadTemplateFromBundle  = NO;
     }
 
     
-    // Если в UserDefault пусто
+    // If UserDefault is empty
     if (shortPathFromUD.length < 1){
-        // Создаем папку
+        //Create a folder
         [self createFolderIfItDoesntExitByPath:fullPath];
 
-    // Если в UserDefault что-то было, то просто перемещаем в новую локацию
+    // If there was something in UserDefault, then just move it to a new location
     } else if ((shortPathFromUD.length > 1) && (![shortPathFromUD isEqualToString:[Templater cutShortPathFrom:fullPath]])) {
        
         NSError* error = [Templater replaceTemplateDirectoryAtPath:fullPath];
         if (error) NSLog(@"error: %@",error);
         
     }
-    // Записываем значение
+    // We write the value
     [Templater saveAnyPathToUserDefault:fullPath];
     
-    // Устанавливаем значение в проперти
+    //Set the value to property
     _pathToTemplateDirectory = fullPath;
 }
 
@@ -465,32 +465,32 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 #pragma mark - Strings / Logics / UserDefault
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод распаковывает архив с папкой стандартных json файлов (ответов от сервера).
- Если укажите nil в аргумент 'atPath', тогда алгоритм автоматический разархиврует папку по пути 'Templater.pathToTemplateDirectory'.
- Данный метод вы можете вызывать каждый раз при запуске приложения внутри метода +APIManager.prepareBeforeUsing:,
- внутри встроена защита от повторных разархиврований.
+ The method unpacks an archive with a folder of standard json files (responses from the server).
+ If you specify nil in the 'atPath' argument, then the algorithm will automatically unzip the folder to the 'Templater.pathToTemplateDirectory' path.
+ You can call this method every time you start the application inside the +APIManager.prepareBeforeUsing: method,
+ inside built-in protection against repeated unzipping.
  --------------------------------------------------------------------------------------------------------------*/
 
 + (void) unarchiveFolderWithDefaultTemplates:(nullable NSString*)atPath
                                   completion:(nullable void(^)(NSError* error))completion
 {
-    // Проверяем был ли ранее архив разрахивирован
+    // Check if the archive was previously unzipped
     BOOL wasZipExtractedEarly = [[NSUserDefaults standardUserDefaults] boolForKey:wasArchiveExtractedUserDefaultKey];
     if (wasZipExtractedEarly){
         return;
     }
     
-    // Устанавливаем путь куда будет произведена разархивация
+    // Set the path where the unzip will be performed
     if (atPath.length < 1){
         atPath = Templater.pathToTemplateDirectory;
     } else {
         [Templater setNewPathToTemplateDirectory:atPath];
     }
     
-    // Удаляем на конце строки названия папки
+    // Delete the folder name at the end of the line
     atPath = [Templater removeDefaultFolderNameToPathIfItNeeded:atPath];
     
-    // Ищем путь к архиву в bundle приложения
+    // We are looking for the path to the archive in the bundle of the application
     NSString *localPathAtZip = [[NSBundle mainBundle] pathForResource:@"APIManagerResponseDefaultTemplates" ofType:@"zip"];
     if (localPathAtZip.length < 1){
         if (completion)
@@ -498,7 +498,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
         return;
     }
     
-    // Разрахивируем архив
+    // Unzip the archive
     [SSZipArchive unzipFileAtPath:localPathAtZip
                     toDestination:atPath
                   progressHandler:^(NSString * _Nonnull entry, unz_file_info zipInfo, long entryNumber, long total) {
@@ -510,7 +510,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
                       }else if (succeeded){
                           if (completion) completion(nil);
                           
-                          // Записываем флаг говорящий о том, что разрахивация была проведена
+                          // We write down the flag indicating that the unpacking was carried out
                           [[NSUserDefaults standardUserDefaults] setBool:YES forKey:wasArchiveExtractedUserDefaultKey];
                           [[NSUserDefaults standardUserDefaults] synchronize];
                       }
@@ -520,7 +520,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Оберзает длинный путь, возвращая только 'Documents/APIManagerResponseTemplates'
+  Cuts the long path by returning only 'Documents / API Manager Response Templates'
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSString*) cutShortPathFrom:(NSString*)fullPath
 {
@@ -537,7 +537,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Соединяет строку NSHomeDirectory() c 'Documents/APIManagerResponseTemplates' (если это требуется), и возвращает
+ Concatenates the NSHomeDirectory () string with 'Documents / APIManagerResponseTemplates' (if required), and returns
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSString*) buildFullPathFrom:(NSString*)shortPath
 {
@@ -554,7 +554,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 }
 
 /*--------------------------------------------------------------------------------------------------------------
-  Добавляет название папки 'APIManagerResponseTemplates' в переданный путь (если оно там отсуствует)
+ Adds the folder name 'APIManagerResponseTemplates' to the passed path (if it is not there)
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSString*) appendDefaultFolderNameToPathIfItNeeded:(NSString*)path
 {
@@ -568,7 +568,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 }
 
 /*--------------------------------------------------------------------------------------------------------------
- Удаляет название папки 'APIManagerResponseTemplates' в переданный путь (если оно там присутствует)
+ Removes the name of the folder 'APIManagerResponseTemplates' to the given path (if it is present there)
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSString*) removeDefaultFolderNameToPathIfItNeeded:(NSString*)path
 {
@@ -577,7 +577,6 @@ static BOOL                 _loadTemplateFromBundle  = NO;
     NSRange templateFolder_range = [path rangeOfString:@"/APIManagerResponseTemplates"];
     if (templateFolder_range.location != NSNotFound){
         path = [path substringToIndex:templateFolder_range.location];
-        //path = [path stringByAppendingPathComponent:@"/APIManagerResponseTemplates"];
     }
     return path;
 }
@@ -585,7 +584,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Сохраняет путь в UserDefault. Может принять любую модификацию shortPath/fullPath
+ Saves the path to UserDefault. Can accept any modification of shortPath / fullPath
  --------------------------------------------------------------------------------------------------------------*/
 + (BOOL) saveAnyPathToUserDefault:(NSString*)path
 {
@@ -594,7 +593,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
     path = [Templater appendDefaultFolderNameToPathIfItNeeded:path];
     path = [Templater cutShortPathFrom:path];
     
-    // Записываем значение
+    // Write valu
     [[NSUserDefaults standardUserDefaults] setObject:path forKey:templateDirectoryUserDefaultKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
@@ -602,7 +601,7 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 }
 
 /*--------------------------------------------------------------------------------------------------------------
- Извлекает из UserDefault и возвращает короткую строку 'Documents/APIManagerResponseTemplates'.
+  Extracts from UserDefault and returns the short string 'Documents / APIManagerResponseTemplates'.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSString*) shortPathFromUserDefault
 {
@@ -611,8 +610,8 @@ static BOOL                 _loadTemplateFromBundle  = NO;
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Извлекает из UserDefault короткую строку 'Documents/APIManagerResponseTemplates'.
- Модифицирует 'NSHomeDirectory()'+'Documents/APIManagerResponseTemplates' и возвращает полный путь
+ Retrieves the short string 'Documents / APIManagerResponseTemplates' from UserDefault.
+ Modifies 'NSHomeDirectory ()' + 'Documents / APIManagerResponseTemplates' and returns the full path
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSString*) fullPathFromUserDefault
 {

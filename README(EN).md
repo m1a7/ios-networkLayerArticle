@@ -1,7 +1,10 @@
 # A network layer is a heart of the mobile app
 
 How to efficiently design a network layer for an iOS application.
-<img src="Documentation/Carbon-Screens/scheme11.png" title="" alt="" data-align="center">
+
+<p align="center">
+<img src="Documentation/Carbon-Screens/scheme11.png">
+</p>
 
 ## For whom this article is written
 
@@ -29,7 +32,9 @@ In addition, you have the ability to configure network operation objects very fl
 In order to make working with the network in our application easy and pleasant, we need to perform an initial decomposition of the entire network layer.
 The layer will be divided into the following modules and files, which you can see below:
 
-<img src="Documentation/Carbon-Screens/scheme1.png" title="" alt="" data-align="center">
+<p align="center">
+<img src="Documentation/Carbon-Screens/scheme1.png">
+</p>
 
 ## Responsibilities of Network Layer classes
 
@@ -66,7 +71,9 @@ The technology offers a choice of several different classes for performing tasks
 | `RXNO_DownloadOperation` | **DO**           | Downloads data and writes it to disk as a separate file.                                                                                                                                                                              |
 | `RXNO_UploadOperation`   | **UO**           | It is intended for uploading data to the server, unlike `DTO` it has a distinctive ability to upload data located on the device's disk(without first converting it to `NSData`), for this it takes the local  `NSURL` as parameters . |
 
-<img src="Documentation/Carbon-Screens/scheme2.png" title="" alt="" data-align="center">
+<p align="center">
+<img src="Documentation/Carbon-Screens/scheme2.png">
+</p>
 
 **Examples of usage:**
 
@@ -134,7 +141,9 @@ As a result, when using standard approaches in building a network layer, namely 
 To solve this problem, the `RXNO_GroupOperation` class was developed inside the `RXNO` framework.
 Which is just like `RXNO_BaseOperation` is a direct descendant of `NSOperation`, and also has a similar control interface to `RXNO_BaseOperation`.
 
-<img src="Documentation/Carbon-Screens/scheme3.png" title="" alt="" data-align="center">
+<p align="center">
+<img src="Documentation/Carbon-Screens/scheme3.png">
+</p>
 
 `RXNO_GroupOperation` has some similarities with` NSBlockOperation`, and is intended so that in the body of its `mainBlock` you synchronously start the execution of normal network operations to avoid the occurrence of` callback-hell`.
 
@@ -229,7 +238,9 @@ Despite this, we have the opportunity to establish our own session, which may co
 
 This engineering solution can be seen more clearly in this diagram:
 
-<img src="Documentation/Carbon-Screens/scheme4.png" title="" alt="" data-align="center">
+<p align="center">
+<img src="Documentation/Carbon-Screens/scheme4.png">
+</p>
 
 As we can see in the `start` method, the algorithm calls the` prioritySession` function, which returns the private session from the `privateSession` if it was initialized, and if not, it returns` defaultSession`.
 
@@ -421,7 +432,7 @@ And finally, in the last section, helper methods are listed, into which differen
 + (NSError*) callCompletionWithThreeArg:(nullable void(^)(NSError* _Nullable error, id _Nullable arg1, id _Nullable arg2))completion ifOccuredErrorInOperation:(BO*)op;
 ```
 
-Source code: [APIManager.h](CodeSnippets(RU)/APIManager.h)
+Source code: [APIManager.h](CodeSnippets(EN)/APIManager.h)
 <br><br>
 
 ### 📄 The File APIConsts.h
@@ -459,7 +470,7 @@ returns an error even for a correct server response.
 #endif
 ```
 
-Source code: [APIConsts.h](CodeSnippets(RU)/APIConsts.h)
+Source code: [APIConsts.h](CodeSnippets(EN)/APIConsts.h)
 <br><br>
 
 ### 📄 The File APIMethods.h
@@ -520,7 +531,7 @@ static NSString *const logout = @"auth.logout";
 #endif 
 ```
 
-Source code: [APIMethods.h](CodeSnippets(RU)/APIMethods.h)
+Source code: [APIMethods.h](CodeSnippets(EN)/APIMethods.h)
 <br><br>
 
 ### 🏗🧱 NetworkRequestConstructor
@@ -653,7 +664,7 @@ Source code:
 
 | Header file                                                                 | Implementation file                                                         |
 | --------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| [NetworkRequestConstructor.h](CodeSnippets(RU)/NetworkRequestConstructor.h) | [NetworkRequestConstructor.m](CodeSnippets(RU)/NetworkRequestConstructor.m) |
+| [NetworkRequestConstructor.h](CodeSnippets(EN)/NetworkRequestConstructor.h) | [NetworkRequestConstructor.m](CodeSnippets(EN)/NetworkRequestConstructor.m) |
 
 <br><br>
 
@@ -673,7 +684,9 @@ If the required sample is in the device's storage, a comparative check will take
 
 If it succeeds, then the `validateResponse:fromAPIMethod:` method will return `nil`, otherwise an error will be returned.<br> 
 
-<img src="Documentation/Carbon-Screens/scheme5.png" title="" alt="" data-align="center">
+<p align="center">
+<img src="Documentation/Carbon-Screens/scheme5.png">
+</p>
 
 We will not go into the details of the implementation of this module, due to the fact that it contains many auxiliary functions that ensure correct operation, but have no direct relation to the operation of the network layer.
 
@@ -760,8 +773,8 @@ Source code:
 
 | Header file                                                       | Implementation file                                               |
 | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [Templater.h](CodeSnippets(RU)/Templater.h)                       | [TemplaterFileManager.h](CodeSnippets(RU)/TemplaterFileManager.h) |
-| [TemplaterFileManager.h](CodeSnippets(RU)/TemplaterFileManager.h) | [TemplaterFileManager.m](CodeSnippets(RU)/TemplaterFileManager.m) |
+| [Templater.h](CodeSnippets(EN)/Templater.h)                       | [TemplaterFileManager.h](CodeSnippets(EN)/TemplaterFileManager.h) |
+| [TemplaterFileManager.h](CodeSnippets(EN)/TemplaterFileManager.h) | [TemplaterFileManager.m](CodeSnippets(EN)/TemplaterFileManager.m) |
 
 <br><br>
 
@@ -788,7 +801,8 @@ So, below we can see one general method, and the automatic validation method.
 
 #pragma mark - Shared Validation Methods
 /*--------------------------------------------------------------------------------------------------------------
-The distributor method independently determines which validation method to call for json received by a specific API method --------------------------------------------------------------------------------------------------------------*/
+The distributor method independently determines which validation method to call for json received by a specific API method 
+--------------------------------------------------------------------------------------------------------------*/
 + (NSError* _Nullable) validateResponse:(NSDictionary*)recievedJSON fromAPIMethod:(APIMethod)method;
 
 
@@ -897,7 +911,8 @@ You can pass the set of flags that you are interested in checking for in each sp
 
 ```objectivec
 /*--------------------------------------------------------------------------------------------------------------
- The bitmask contains the settings by which the server response will be validated. --------------------------------------------------------------------------------------------------------------*/
+ The bitmask contains the settings by which the server response will be validated.
+ --------------------------------------------------------------------------------------------------------------*/
 typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 
     CheckOnKeys           = 1 << 0, // Checks for the keys from the template in the received json from the server
@@ -1082,7 +1097,7 @@ Then there will be no errors if you do not change the structure of old objects, 
 
 ---
 
-Source code: [Validator.h](CodeSnippets(RU)/Validator.h) / [Validator.m](CodeSnippets(RU)/Validator.m) .
+Source code: [Validator.h](CodeSnippets(EN)/Validator.h) / [Validator.m](CodeSnippets(EN)/Validator.m) .
 <br><br>
 
 ### 🗂 🔍 Parser
@@ -1106,7 +1121,8 @@ Usually the data is on the surface and we immediately transfer the ready-made `j
 + (nullable NSNumber*) lastSeenPlatformInUserGetMethod:(NSDictionary*)json error:(NSError*_Nullable* _Nullable)error;
 
 /*--------------------------------------------------------------------------------------------------------------
- Retrieves the number of subscribers from the 'counters' dictionary that was returned by a call to the 'UserGet' method. --------------------------------------------------------------------------------------------------------------*/
+ Retrieves the number of subscribers from the 'counters' dictionary that was returned by a call to the 'UserGet' method. 
+--------------------------------------------------------------------------------------------------------------*/
 + (nullable NSNumber*) followersInUserGetMethodFromCounter:(NSDictionary*)counters error:(NSError*_Nullable* _Nullable)error;
 
 
@@ -1149,7 +1165,7 @@ Like others, the module has its own naming rules.
 }
 ```
 
-Source code: [Parser.h](CodeSnippets(RU)/Parser.h) / [Parser.m](CodeSnippets(RU)/Parser.m) .
+Source code: [Parser.h](CodeSnippets(EN)/Parser.h) / [Parser.m](CodeSnippets(EN)/Parser.m) .
 <br><br>
 
 ### 📄 ➡️ 💾 Mapper
@@ -1274,7 +1290,7 @@ And the module itself will look like this
 @end
 ```
 
-Source code: [Mapper.h](CodeSnippets(RU)/Mapper.h) / [Mapper.m](CodeSnippets(RU)/Mapper.m) .
+Source code: [Mapper.h](CodeSnippets(EN)/Mapper.h) / [Mapper.m](CodeSnippets(EN)/Mapper.m) .
 <br><br>
 
 ### 🌐🕹 APIManager.m
@@ -1363,7 +1379,9 @@ It is also worth noting two more very important points.
 
 <br>
 
-<img title="" src="Documentation/Carbon-Screens/scheme6.png" alt="" data-align="center" width="679">
+<p align="center">
+<img src="Documentation/Carbon-Screens/scheme6.png">
+</p>
 
 Ultimately, each `APIManager` method looks something like the one shown below.
 The solution takes only 30 lines.
@@ -1422,7 +1440,9 @@ After that, you are engaged in obtaining a new token.<br>
 As soon as you get a new token, immediately call the library method, which in its block will transfer the array of those **"postponed operations"** to your disposal, and your task is to manually insert a new token into each of the operations.<br>
 Next, you will pass an array of modified operations to the block of that function, and it, in turn, will send them to the queue for execution.<br>
 
-<img src="Documentation/Carbon-Screens/scheme7.png" title="" alt="" data-align="center">
+<p align="center">
+<img src="Documentation/Carbon-Screens/scheme7.png">
+</p>
 
 ---
 
@@ -1462,7 +1482,9 @@ Which will not allow such a collision to happen. And also only once will allow y
 
 If the process of obtaining a fresh token is presented in the form of a diagram, then it will be like this:
 
-<img src="Documentation/Carbon-Screens/scheme8.png" title="" alt="" data-align="center">
+<p align="center">
+<img src="Documentation/Carbon-Screens/scheme8.png">
+</p>
 
 In the code of the `receiveTokenFromWebViewAuth` method, you may notice at first glance strange properties like `isMayUnlockSemaphore`  or  `unlockSemaphoreForAllPostponned` methods.<br> 
 The point is that **RXNO** supports synchronous execution of operations.<br>
@@ -1585,7 +1607,7 @@ Then everything happens according to the scenario known to us.<br>
 
 This concludes the part of the article describing the internal structure of the network layer, and begins the part telling about the practice of using the network layer in the application.
 
-Source code:  [APIManager.m](CodeSnippets(RU)/Mapper.m) .
+Source code:  [APIManager.m](CodeSnippets(EN)/Mapper.m) .
 
 ---
 
@@ -1637,7 +1659,7 @@ For this, it is recommended to create a category `APIManager+Utilites` by defaul
 ```
 
 Also, similar categories can be created, for example, to support encryption and other functional responsibilities.<br>
-Source code: [APIManager+Utilites.h](CodeSnippets(RU)/APIManager+Utilites.h)  / [APIManager+Utilites.m](CodeSnippets(RU)/APIManager+Utilites.m).
+Source code: [APIManager+Utilites.h](CodeSnippets(EN)/APIManager+Utilites.h)  / [APIManager+Utilites.m](CodeSnippets(EN)/APIManager+Utilites.m).
 <br>
 
 ## Practice of using the network layer
@@ -1646,7 +1668,9 @@ Of course, it is obvious that the practices of interacting with the network laye
 In my opinion, one of the most balanced is the **MVVM** pattern, since the ratio between the number of files and usability is optimal.<br>
 Below will be shown examples of the network layer in the architecture **MVVM**.
 
-<img src="Documentation/Carbon-Screens/scheme9.png" title="" alt="" data-align="center">
+<p align="center">
+<img src="Documentation/Carbon-Screens/scheme9.png">
+</p>
 
 | Duties<br/>ViewController                                    | Duties<br/>ViewModel                                                                                                                                                                    | Duties<br/>APIManager                                                                                 |
 | ------------------------------------------------------------ |:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
@@ -1919,8 +1943,8 @@ Source code:
 
 | Header file                                           | Implementation file                                   |
 | ----------------------------------------------------- | ----------------------------------------------------- |
-| [UserProfileTVC.h](CodeSnippets(RU)/UserProfileTVC.h) | [UserProfileTVC.m](CodeSnippets(RU)/UserProfileTVC.m) |
-| [UserProfileVM.h](CodeSnippets(RU)/UserProfileVM.h)   | [UserProfileVM.m](CodeSnippets(RU)/UserProfileVM.m)   |
+| [UserProfileTVC.h](CodeSnippets(EN)/UserProfileTVC.h) | [UserProfileTVC.m](CodeSnippets(EN)/UserProfileTVC.m) |
+| [UserProfileVM.h](CodeSnippets(EN)/UserProfileVM.h)   | [UserProfileVM.m](CodeSnippets(EN)/UserProfileVM.m)   |
 
 <br><br>
 

@@ -22,23 +22,22 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
- 🏗 'NetworkRequestConstructor' (aka NRC) - класс созданный для конструирования запросов к API
+ 🏗 'NetworkRequestConstructor' (aka NRC) - constructs requests ('NSURLRequest') for the API.
  ---------------
- Главной задачей класса - это декомпозировать сетевой слой, взяв на себя обязанность в удобный для пользователя
- способ конфигурировать сетевые запросы к API.
+ The main task of the class is to decompose the network layer, taking on the responsibility in a user-friendly way
+ a way to configure network API requests.
  ---------------
  [⚖️] Duties:
- - Конфигурировать сетевые запросы к API.
+ - Configure network API requests.
  ---------------
  The class provides the following features:
- - вы можете получить нужный вам запрос используя общий метод +buildRequestForMethod:properties:.
- - вы можете получить нужный вам запрос используя индивидуальный метод для каждого метода API.
+ - you can get the request you want using the general method + buildRequestForMethod: properties :.
+ - you can get the request you need using an individual method for each API method.
  ---------------
  Additionally:
- (⚠️) Для некоторых API методов класс предоставляет несколько видов методов-конструкторов.
- Первый вид принимает несколько сырых аргументов (int/nsstring/float/итд) и сам формирует запрос.
- Второй вид принимает готовый словарь с параметрами, и в случае надобности самостоятельно добавляет необходимые
- значения.
+ (⚠️) For some method APIs, the class provides several kinds of constructor methods.
+ The first type takes several raw arguments (int / nsstring / float / etc.) and forms the request itself.
+ The second type takes a ready-made dictionary with parameters, and, if necessary, independently adds the necessary values.
  --------------------------------------------------------------------------------------------------------------*/
 
 
@@ -58,7 +57,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*--------------------------------------------------------------------------------------------------------------
- 🥇 Основной метод для взаимодейсвтия с конструктором запросов.
+ 🥇 The main method for interacting with the query designer.
  --------------------------------------------------------------------------------------------------------------*/
 
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod:(APIMethod)method
@@ -105,15 +104,15 @@
 #pragma mark - APIMethod - user.get
 
 /*--------------------------------------------------------------------------------------------------------------
- ⭐️ Возвращает расширенную информацию о пользователях.
+ ⭐️ Returns extended information about users.
  -------
- 📥 Формирует запрос из пришедшего словаря с параметрами:
+ 📥 Forms a request from the received dictionary with parameters:
  
  - user_ids  : [155510513]
  - fields    : [photo_50,photo_100,online,last_seen,music]
  - name_case : Nom
  -------
- 📖 Подробнее: https://vk.com/dev/users.get
+ 📖 More details: https://vk.com/dev/users.get
  --------------------------------------------------------------------------------------------------------------*/
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_UsersGet:(nullable NSArray<NSString*>*)userIds
                                                            fields:(nullable NSArray<NSString*>*)fields
@@ -131,7 +130,7 @@
 
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_UsersGet:(nullable NSDictionary<NSString*,id>*)properties
 {
-    // Создаем шаблонную изначальную структуру параметров
+    // Create a boilerplate initial parameter structure
     NSMutableDictionary* params = [NSMutableDictionary new];
     params[@"user_ids"]     =  @[];
     params[@"fields"]       =  @[@"photo_50",@"photo_100",@"photo_200",@"photo_max_orig",@"online",@"last_seen",@"counters"];
@@ -139,12 +138,12 @@
     params[@"v"]            =  @"5.122";
     params[@"access_token"] =  APIManager.token.access_token;
 
-    // Объединяем словари если в 'properties' из аргументов вообще что-то есть.
+    // We combine the dictionaries if there is anything at all in the 'properties' of the arguments.
     if ((properties.allKeys.count > 0) || (properties != nil)){
          params = (NSMutableDictionary*)[params mergeWithHighPriority:properties isConcatenateArrays:YES];
     }
     
-    // Формируем request
+    // Build request
     NSMutableURLRequest* request =
     [BO createRequestWithURL:[API baseURLappend:usersGet] HTTPMethod:GET params:params headers:nil];
     
@@ -155,16 +154,16 @@
 #pragma mark - APIMethod - wall.get
 
 /*--------------------------------------------------------------------------------------------------------------
- ⭐️ Возвращает записи со стены.
+ ⭐️ Returns records from the wall.
  -------
- 📥 Формирует запрос из пришедшего словаря с параметрами:
+ 📥 Forms a request from the received dictionary with parameters:
  
  - owner_id  : 155510513
  - offset    : 0
  - count     : 10
  - filter    : all
  -------
- 📖 Подробнее: https://vk.com/dev/wall.get
+ 📖 More details: https://vk.com/dev/wall.get
  --------------------------------------------------------------------------------------------------------------*/
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_WallGet:(nullable NSString*)ownerID
                                                           offset:(NSInteger)offset
@@ -184,7 +183,7 @@
 
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_WallGet:(nullable NSDictionary<NSString*,id>*)properties
 {
-    // Создаем шаблонную изначальную структуру параметров
+    // Create a boilerplate initial parameter structure
     NSMutableDictionary* params = [NSMutableDictionary new];
     params[@"owner_id"] = APIManager.token.userID;
     params[@"offset"]   = @"0";
@@ -194,12 +193,12 @@
     params[@"v"]            =  @"5.122";
     params[@"access_token"] =  APIManager.token.access_token;
     
-    // Объединяем словари если в 'properties' из аргументов вообще что-то есть.
+    // We combine the dictionaries if there is anything at all in the 'properties' of the arguments.
     if ((properties.allKeys.count > 0) || (properties != nil)){
         params = (NSMutableDictionary*)[params mergeWithHighPriority:properties isConcatenateArrays:YES];
     }
     
-    // Формируем request
+    // Build request
     NSMutableURLRequest* request =
     [BO createRequestWithURL:[API baseURLappend:wallGet] HTTPMethod:GET params:params headers:nil];
     return request;
@@ -209,34 +208,26 @@
 #pragma mark - APIMethod - wall.post
 
 /*--------------------------------------------------------------------------------------------------------------
- ⭐️ Позволяет создать запись на стене, предложить запись на стене публичной страницы, опубликовать существующую отложенную запись.
+ ⭐️ Allows you to create a post on the wall, suggest a post on the wall of a public page, post an existing deferred post.
  -------
- 📥 Формирует запрос из пришедшего словаря с параметрами:
+ 📥 Forms a request from the received dictionary with parameters:
  
- - owner_id     : 155510513 (идентификатор пользователя или сообщества) (owner_id=-1 соответствует идентификатору сообщества.)
- - friends_only : 1/0 (запись будет доступна только друзьям./всем пользователям.)
- - from_group   : 1/0 ( запись будет опубликована от имени группы / запись будет опубликована от имени пользователя (по умолчанию))
- - message      : "" (текст сообщения (является обязательным, если не задан параметр attachments))
- - attachments  : "" (список объектов, приложенных к записи и разделённых символом ',')
-                     <type><owner_id>_<media_id>,<type><owner_id>_<media_id>
-                     <type> — тип медиа-приложения:
-                     photo — фотография;
-                     video — видеозапись;
-                     Например:
-                     photo100172_166443618,photo-1_265827614
+ - owner_id     : 155510513
+ - friends_only : 1/0
+ - from_group   : 1/0
+ - message      : ""
+ - attachments  : ""
  - services : "twitter"/"facebook"
- - signed   : 1/0 (у записи, размещенной от имени сообщества, будет добавлена подпись (имя пользователя, разместившего запись))
- - guid     : "" (уникальный идентификатор, предназначенный для предотвращения повторной отправки одинаковой записи. Действует в течение одного часа.)
- 
- - mark_as_ads    : 1/0 (метки добавлено не будет./у записи, размещенной от имени сообщества, будет добавлена метка "это реклама")
- - close_comments : 1/0 (1 — комментарии к записи отключены. / 0 — комментарии к записи включены.)
+ - signed   : 1/0
+ - guid     : ""
+ - mark_as_ads    : 1/0
+ - close_comments : 1/0
  -------
- 📖 Подробнее: https://vk.com/dev/wall.post
+ 📖 More details: https://vk.com/dev/wall.post
  --------------------------------------------------------------------------------------------------------------*/
-
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_WallPost:(nullable NSString*)ownerID
                                                           message:(nullable NSString*)message
-                                                      attachments:(nullable NSString*)attachments // а может массив принимать ?
+                                                      attachments:(nullable NSString*)attachments
 {
     NSMutableDictionary* properties = [NSMutableDictionary new];
     
@@ -250,24 +241,24 @@
 
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_WallPost:(nullable NSDictionary<NSString*,id>*)properties
 {
-    // Одно из этих двух проперти должно обязательно присутствовать
+    // One of these two must be present
     if ((!properties[@"message"]) && (!properties[@"attachments"])){
         return nil;
     }
     
-    // Создаем шаблонную изначальную структуру параметров
+    // Create a boilerplate initial parameter structure
     NSMutableDictionary* params = [NSMutableDictionary new];
     params[@"owner_id"]     = APIManager.token.userID;
     params[@"v"]            =  @"5.21";
     params[@"access_token"] =  APIManager.token.access_token;
     
     
-    // Объединяем словари если в 'properties' из аргументов вообще что-то есть.
+    // We combine the dictionaries if there is anything at all in the 'properties' of the arguments.
     if ((properties.allKeys.count > 0) || (properties != nil)){
         params = (NSMutableDictionary*)[params mergeWithHighPriority:properties isConcatenateArrays:YES];
     }
     
-    // Формируем request
+    // Build request
     NSMutableURLRequest* request =
     [BO createRequestWithURL:[API baseURLappend:wallPost] HTTPMethod:GET params:params headers:nil];
     return request;
@@ -276,17 +267,15 @@
 #pragma mark - APIMethod -  photos.getWallUploadServer
 
 /*--------------------------------------------------------------------------------------------------------------
- ⭐️ Возвращает адрес сервера для загрузки фотографии на стену пользователя или сообщества.
+ ⭐️ Returns the server address for uploading a photo to a user or community wall.
  -------
- 📥 Формирует запрос из пришедшего словаря с параметрами:
+ 📥 Forms a request from the received dictionary with parameters:
  
- - user_id  : 155510513 // Если на стену пользователя
- - group_id : 0         // Если на стену группы
+ - user_id  : 155510513 // If on the user's wall
+ - group_id : 0         // If on the wall of the group
  -------
- 📖 Подробнее: https://vk.com/dev/photos.getWallUploadServer
+ 📖 More details: https://vk.com/dev/photos.getWallUploadServer
  --------------------------------------------------------------------------------------------------------------*/
-
-
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_PhotosGetWallUploadServer:(nullable NSString*)userID
                                                                            groupID:(nullable NSString*)groupID
 {
@@ -299,18 +288,18 @@
 
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_PhotosGetWallUploadServer:(nullable NSDictionary<NSString*,id>*)properties
 {
-    // Создаем шаблонную изначальную структуру параметров
+    // Create a boilerplate initial parameter structure
     NSMutableDictionary* params = [NSMutableDictionary new];
     params[@"user_id"]      = APIManager.token.userID;
     params[@"v"]            =  @"5.126";
     params[@"access_token"] =  APIManager.token.access_token;
     
-    // Объединяем словари если в 'properties' из аргументов вообще что-то есть.
+    // We combine the dictionaries if there is anything at all in the 'properties' of the arguments.
     if ((properties.allKeys.count > 0) || (properties != nil)){
         params = (NSMutableDictionary*)[params mergeWithHighPriority:properties isConcatenateArrays:YES];
     }
     
-    // Формируем request
+    // Build request
     NSMutableURLRequest* request =
     [BO createRequestWithURL:[API baseURLappend:photosGetWallUploadServer] HTTPMethod:GET params:params headers:nil];
     return request;
@@ -321,9 +310,9 @@
 #pragma mark - APIMethod - photos.getAll
 
 /*--------------------------------------------------------------------------------------------------------------
- ⭐️ Возвращает все фотографии пользователя или сообщества в антихронологическом порядке.
+ ⭐️ Returns all photos of a user or community in anti-chronological order.
  -------
- 📥 Формирует запрос из пришедшего словаря с параметрами:
+ 📥 Forms a request from the received dictionary with parameters:
  
  - owner_id : 155510513
  - offset   :
@@ -332,7 +321,7 @@
  - skip_hidden : bool
  - v           : 5.21
  -------
- 📖 Подробнее: https://vk.com/dev/photos.getAll
+ 📖 More details: https://vk.com/dev/photos.getAll
  --------------------------------------------------------------------------------------------------------------*/
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_PhotosGetAll:(nullable NSString*)ownerID
                                                                offset:(NSInteger)offset
@@ -350,7 +339,7 @@
 
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_PhotosGetAll:(nullable NSDictionary<NSString*,id>*)properties
 {
-    // Создаем шаблонную изначальную структуру параметров
+    // Create a boilerplate initial parameter structure
     NSMutableDictionary* params = [NSMutableDictionary new];
     params[@"owner_id"] = APIManager.token.userID;
     params[@"offset"]   = @"0";
@@ -362,12 +351,12 @@
     params[@"v"]            =  @"5.21";
     params[@"access_token"] =  APIManager.token.access_token;
     
-    // Объединяем словари если в 'properties' из аргументов вообще что-то есть.
+    // We combine the dictionaries if there is anything at all in the 'properties' of the arguments.
     if ((properties.allKeys.count > 0) || (properties != nil)){
         params = (NSMutableDictionary*)[params mergeWithHighPriority:properties isConcatenateArrays:YES];
     }
     
-    // Формируем request
+    // Build request
     NSMutableURLRequest* request =
     [BO createRequestWithURL:[API baseURLappend:photosGetAll] HTTPMethod:GET params:params headers:nil];
     return request;
@@ -377,22 +366,21 @@
 #pragma mark - APIMethod - photos.saveWallPhoto
 
 /*--------------------------------------------------------------------------------------------------------------
- ⭐️ Сохраняет фотографии после успешной загрузки на URI, полученный методом
+ ⭐️ Saves photos after successful upload to the URI obtained by the method
  -------
- 📥 Формирует запрос из пришедшего словаря с параметрами:
+ 📥 Forms a request from the received dictionary with parameters:
  
- - user_id  : 155510513 // Если на стену пользователя
- - group_id : 0         // Если на стену группы
+ - user_id  : 155510513 // If on the user's wall
+ - group_id : 0         // If on the wall of the group
  - photo    : ""
  - server   : 17
  - hash     : ""
- - latitude  : (от -90 до 90)
- - longitude : (от -180 до 180)
+ - latitude  : (from -90 to 90)
+ - longitude : (from -180 to 180)
  - caption   : "tekst"
  -------
- 📖 Подробнее: https://vk.com/dev/photos.saveWallPhoto
+ 📖 More details: https://vk.com/dev/photos.saveWallPhoto
  --------------------------------------------------------------------------------------------------------------*/
-
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_PhotosSaveWallPhoto:(nullable NSString*)userID
                                                                      groupID:(nullable NSString*)groupID
                                                                        photo:(NSString*)photo
@@ -414,7 +402,7 @@
 
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_PhotosSaveWallPhoto:(nullable NSDictionary<NSString*,id>*)properties
 {
-    // Создаем шаблонную изначальную структуру параметров
+    // Create a boilerplate initial parameter structure
     NSMutableDictionary* params = [NSMutableDictionary new];
     
     if (!properties[@"user_id"] && !properties[@"group_id"]){
@@ -423,12 +411,12 @@
     params[@"v"]            =  @"5.126";
     params[@"access_token"] =  APIManager.token.access_token;
     
-    // Объединяем словари если в 'properties' из аргументов вообще что-то есть.
+    // We combine the dictionaries if there is anything at all in the 'properties' of the arguments.
     if ((properties.allKeys.count > 0) || (properties != nil)){
         params = (NSMutableDictionary*)[params mergeWithHighPriority:properties isConcatenateArrays:YES];
     }
     
-    // Формируем request
+    // Build request
     NSMutableURLRequest* request =
     [BO createRequestWithURL:[API baseURLappend:photosSaveWallPhoto] HTTPMethod:GET params:params headers:nil];
     return request;
@@ -438,9 +426,9 @@
 #pragma mark - APIMethod - friends.get
 
 /*--------------------------------------------------------------------------------------------------------------
- ⭐️ Возвращает список идентификаторов друзей пользователя или расширенную информацию о друзьях пользователя
+ ⭐️ Returns a list of user friend ids or extended information about user friends
  -------
- 📥 Формирует запрос из пришедшего словаря с параметрами:
+ 📥 Forms a request from the received dictionary with parameters:
  
  - owner_id : 155510513
  - offset   :
@@ -453,9 +441,8 @@
  - name_case : nom/gen/dat/acc/ins/abl.
  - v         : 5.21
  -------
- 📖 Подробнее: https://vk.com/dev/friends.get
+ 📖 More details: https://vk.com/dev/friends.get
  --------------------------------------------------------------------------------------------------------------*/
-
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_FriendsGet:(nullable NSString*)ownerID
                                                               order:(nullable NSString*)order
                                                              fields:(NSArray<NSString*>* _Nullable)fields
@@ -473,7 +460,7 @@
 
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_FriendsGet:(nullable NSDictionary<NSString*,id>*)properties
 {
-    // Создаем шаблонную изначальную структуру параметров
+    // Create a boilerplate initial parameter structure
     NSMutableDictionary* params = [NSMutableDictionary new];
     params[@"user_id"] = APIManager.token.userID;
     params[@"offset"]  = @"0";
@@ -486,12 +473,12 @@
     params[@"v"]            =  @"5.21";
     params[@"access_token"] =  APIManager.token.access_token;
     
-    // Объединяем словари если в 'properties' из аргументов вообще что-то есть.
+    // We combine the dictionaries if there is anything at all in the 'properties' of the arguments.
     if ((properties.allKeys.count > 0) || (properties != nil)){
         params = (NSMutableDictionary*)[params mergeWithHighPriority:properties isConcatenateArrays:YES];
     }
     
-    // Формируем request
+    // We form a request
     NSMutableURLRequest* request =
     [BO createRequestWithURL:[API baseURLappend:friendsGet] HTTPMethod:GET params:params headers:nil];
     return request;
@@ -500,7 +487,7 @@
 #pragma mark - Another methods
 
 /*--------------------------------------------------------------------------------------------------------------
- Принимает 'uploadURL' и конфигурирует 'POST' запрос для выгрузки фотографий на сервер.
+ Accepts an 'uploadURL' and configures a 'POST' request to upload photos to the server.
  --------------------------------------------------------------------------------------------------------------*/
 + (NSMutableURLRequest* _Nullable) buildRequestForMethod_UploadImages:(NSArray<NSData*>*)imagesData
                                                             uploadURL:(NSString*)uploadURL

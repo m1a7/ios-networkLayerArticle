@@ -1,3 +1,11 @@
+//
+//  UserProfileTVC.h
+//  vk-networkLayer
+//
+//  Created by Admin on 06/08/2020.
+//  Copyright © 2020 iOS-Team. All rights reserved.
+//
+
 #import "UserProfileTVC.h"
 // ViewModel
 #import "UserProfileVM.h"
@@ -37,14 +45,14 @@
 
 @interface UserProfileTVC ()
 
-// Данные пользователя
+// User data
 @property (nonatomic, strong) NSString* userID;
 @property (nonatomic, strong) UserProfileVM* viewModel;
 
 // UI
 @property (nonatomic, strong) FooterView* footerView;
 
-// Вспомогательное проперти, для ограничения многократного вызовов методов
+// Helper property to restrict multiple method calls
 @property (nonatomic, assign) BOOL isLoadingData;
 
 @end
@@ -53,7 +61,7 @@
 
 #pragma mark - Life cycle
 /*--------------------------------------------------------------------------------------------------------------
- Внутри 'viewDidLoad' вызываем метод вьюМодели 'performNeededOperations', который получит данные из интернета.
+  Inside the 'viewDidLoad' call the 'performNeededOperations' method of the viewModel, which will receive data from the Internet.
  --------------------------------------------------------------------------------------------------------------*/
 - (void)viewDidLoad
 {
@@ -69,7 +77,7 @@
             [Router presentAlertVCwithTitle:error.domain message:nil userInfo:error.userInfo delay:1.3f];
             return;
         }
-        // Вычисляем координаты для subviews ячеек
+        // Calculate coordinates for subviews cells
         for (id viewModelCell in weak.viewModel.cellsViewModel) {
             
             NSString* cellIdentifier = [UserProfileTVC getClassNameByViewModelCell:viewModelCell];
@@ -77,7 +85,7 @@
                 [NSClassFromString(cellIdentifier) calculateCoordinatesForVM:viewModelCell tableSize:tableSize];
             }
         }
-        // Перезагружаем таблицу
+        // Reloading the table
         MainQueue(^{
             weak.title = weak.viewModel.userFirstName;
             [weak.tableView reloadData];
@@ -130,7 +138,7 @@
     UITableViewCell* cell = nil;
     id vm = self.viewModel.cellsViewModel[indexPath.section];
     
-    // Получаем названия класса ячейки по типу класса вьюМодели
+    // Get the cell class names by the type of the viewModel class
     NSString* identifier = [UserProfileTVC getClassNameByViewModelCell:vm];
 
     cell = [tableView dequeueReusableCellWithIdentifier:identifier];
@@ -138,7 +146,7 @@
          cell = [[NSClassFromString(identifier) alloc] initWithStyle:UITableViewCellStyleDefault
                                                      reuseIdentifier:identifier];
     }
-    // Вставляем viewModel для дальнейшей конфигурации ячейки
+    // Insert viewModel for further cell configuration
     if ([(id)cell respondsToSelector:@selector(setViewModel:)]){
         [(id)cell setViewModel:vm];
     }
@@ -156,7 +164,7 @@
     id vm = self.viewModel.cellsViewModel[indexPath.section];
     Class cellClass = NSClassFromString([UserProfileTVC getClassNameByViewModelCell:vm]);
 
-    // Вызываем метод вычисления высоты ячейки по данным расположенным в viewModel
+    //We call the method for calculating the height of the cell from the data located in the viewModel
     if ([cellClass respondsToSelector:@selector(calculateCellHeightFromVM:tableSize:)]){
         height = [cellClass calculateCellHeightFromVM:vm tableSize:tableView.frame.size];
     }
@@ -168,7 +176,6 @@
  --------------------------------------------------------------------------------------------------------------*/
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //WallPostCellVM* vm = (WallPostCellVM*)self.viewModel.cellsViewModel[indexPath.section];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -286,15 +293,14 @@
      \   \    |  |     |      /     |  |  |  | |  |     |  |       \      /   |  | |   __|   \            /
  .----)   |   |  `----.|  |\  \----.|  `--'  | |  `----.|  `----.   \    /    |  | |  |____   \    /\    /
  |_______/     \______|| _| `._____| \______/  |_______||_______|    \__/     |__| |_______|   \__/  \__/
- 
  */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #pragma mark - <UIScrollViewDelegate>
 
 /*--------------------------------------------------------------------------------------------------------------
- Метод обрабатывает измения позиции скроллБара.
- В данном контроллере при достижении нижний границы экрана, совершается проверка и вызывается метод подгрузки данных.
+ The method handles changes in the scrollBar position.
+ In this controller, when the bottom border of the screen is reached, a check is performed and the data loading method is called.
  --------------------------------------------------------------------------------------------------------------*/
 -(void)scrollViewDidScroll:(UIScrollView*)scrollView
 {
@@ -302,24 +308,23 @@
     float contentSizeHeight = scrollView.contentSize.height;
     float tableViewHeight   = CGRectGetHeight(self.tableView.frame);
     
-    //if ((scrollView.contentOffset.y >= scrollView.contentSize.height/1.1) &&  (self.viewModel.cellsViewModel.count > 0) && (!self.isLoadingData)) // Старое условие
-    if ((contentSizeHeight > 0)  && ((contentSizeHeight - contentOffsetY) <= (tableViewHeight+(tableViewHeight/10))) && (!self.isLoadingData))      // Новое условие
+    if ((contentSizeHeight > 0)  && ((contentSizeHeight - contentOffsetY) <= (tableViewHeight+(tableViewHeight/10))) && (!self.isLoadingData))
     {
-        // Устанавливаем значение флага для избежания повторного попадания в if-блок.
+        // Set the flag to avoid re-entering the if-block.
         self.isLoadingData = YES;
 
-        // Получаем размер таблицы, чтобы потом можно было воспользоваться значением в фоновом потоке
+        // We get the size of the table so that later we can use the value in the background thread
         CGSize tableSize = self.tableView.frame.size;
         
-        // Запускаем процесс работы анимации
+        // Start the animation process
         [self.footerView.footerLoader startAnimating];
 
-        // Вызываем метод viewModel, для получения данных
+        // Calling the viewModel method to get data
         __weak UserProfileTVC* weak = self;
         [self.viewModel wallOpRunItself:NO onQueue:APIManager.aSyncQueue completion:^(NSError* error,
                                                                                       NSArray<WallPostCellVM*>* viewModels,
                                                                                       NSArray<NSIndexPath*>*    indexPaths){
-            // Обрабатываем вариант возникновения ошибки
+            // handle the variant of the error
             if ((error) || (!indexPaths) || (indexPaths.count < 1)) {
                 MainQueue(^{
                     [weak.footerView.footerLoader stopAnimating];
@@ -327,24 +332,16 @@
                 weak.isLoadingData = NO;
                 return;
             }
-            // Таким образом вычилсяем и кэшируем все значения для контента внутри ячейки - здесь, на фоновом потоке.
+            //Thus, we calculate and copy all the values for the content inside the cell - here on the background thread.
             for (WallPostCellVM* cellVM in viewModels) {
                 [WallPostCell calculateCoordinatesForVM:cellVM tableSize:tableSize];
             }
 
             MainQueue(^{
-                // 1-й способ
                 [weak.tableView reloadData];
-                // 2-й способ. Или можем добавлять ячейки анимированно
-                
-                //NSIndexSet *indexSet = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, viewModels.count)];
-                //[weak.tableView beginUpdates];
-                //[weak.tableView insertSections:indexSet withRowAnimation:UITableViewRowAnimationTop];
-                //[weak.tableView endUpdates];
-                
-                // Меняем значения флага
+                // Change flag values
                 weak.isLoadingData = NO;
-                // Останавливаем работу анимации
+                // Stopping the animation
                 [weak.footerView.footerLoader stopAnimating];
             });
         }];
@@ -353,7 +350,7 @@
 #pragma mark - Initialization
 
 /*--------------------------------------------------------------------------------------------------------------
- Инициализирует контроллер с 'userID'. (ViewModel создает самостоятельно)
+ Initializes the controller with 'userID'. (ViewModel builds itself)
  --------------------------------------------------------------------------------------------------------------*/
 + (UserProfileTVC*) initWithUserID:(nullable NSString*)userID
 {

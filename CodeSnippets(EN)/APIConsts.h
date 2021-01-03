@@ -10,7 +10,7 @@
 #define APIConsts_h
 
 /*--------------------------------------------------------------------------------------------------------------
- (📄) File 'APIConsts.h' - содержит объявление абревиатур и сокращенных названий
+ (📄) File 'APIConsts.h' - contains the declaration of abbreviations
  --------------------------------------------------------------------------------------------------------------*/
 
 @class  APIManager;
@@ -23,10 +23,10 @@ typedef void(^AuthenticationCompletion)(NSError* _Nullable error);
 
 
 /*--------------------------------------------------------------------------------------------------------------
- Макрос созданный для ситуации когда в приложении отключенно логирование.
- Но по прежнему имеется потребность выводить логи во время возникновения критических ошибок.
- Например:
- Валидатор не может найти шаблон запроса на диске и поэтому возвращает ошибку даже для корректного ответа сервера.
+ A macro created for a situation when logging is disabled in the application.
+ But there is still a need to display logs when critical errors occur.
+ For example:
+ The validator cannot find the request template on disk and therefore returns an error even for a correct server response.
  --------------------------------------------------------------------------------------------------------------*/
 #if __has_feature(objc_arc)
 #define APILog(FORMAT, ...) fprintf(stderr,"%s %s\n", [[NSString stringWithFormat:@"%s",__PRETTY_FUNCTION__] UTF8String], [[NSString stringWithFormat:FORMAT, ##__VA_ARGS__] UTF8String]);
@@ -36,7 +36,7 @@ typedef void(^AuthenticationCompletion)(NSError* _Nullable error);
 
 
 /*--------------------------------------------------------------------------------------------------------------
- // C method that allows you to use concise syntax when creating a formatted string
+  C method that allows you to use concise syntax when creating a formatted string
  --------------------------------------------------------------------------------------------------------------*/
 static inline NSString * _Nullable str(NSString * _Nullable format, ...)  {
     va_list ap;

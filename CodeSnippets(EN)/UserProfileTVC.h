@@ -1,9 +1,17 @@
+//
+//  UserProfileTVC.h
+//  vk-networkLayer
+//
+//  Created by Admin on 06/08/2020.
+//  Copyright © 2020 iOS-Team. All rights reserved.
+//
+
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /*--------------------------------------------------------------------------------------------------------------
- (👱‍♂️📱) 'UserProfileTVC' - Контроллер отображает страницу пользователя.
+ (👱‍♂️📱) 'UserProfileTVC' - The controller displays the user's page.
  --------------------------------------------------------------------------------------------------------------*/
 
 @interface UserProfileTVC : UITableViewController
@@ -11,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Initialization
 
 /*--------------------------------------------------------------------------------------------------------------
- Инициализирует контроллер с 'userID'. (ViewModel создает самостоятельно)
+ Initializes the controller with 'userID'. (ViewModel builds itself)
  --------------------------------------------------------------------------------------------------------------*/
 + (UserProfileTVC*) initWithUserID:(nullable NSString*)userID;
 

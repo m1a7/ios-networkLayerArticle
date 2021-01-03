@@ -12,23 +12,21 @@
 
 
 /*--------------------------------------------------------------------------------------------------------------
- 🗂 🔍 'Parser' - извлекает данные из сложной структуры.
+ 🗂 🔍 'Parser' - extracts data from a complex structure.
  ---------------
- Применим исключительно в особых случаях, когда требуются достать глубоко расположенные данные.
+ Applicable only in special cases when you need to get deep data.
  ---------------
  [⚖️] Duties:
- - Содержать код методов которые извлекают данные из сложных структур, чтобы не засорять данным кодом остальные сущности.
+ - Contain the code of methods that retrieve data from complex structures, so as not to clutter up other entities with this code.
  ---------------
  [📇] Code style:
- 1) Имя метода должно начинаться с названия того элемента который планируется извлекать. (Напр. 'lastSeenPlatform')
- 2) После имени метода обязательно идет название API метода (напр 'UserGet') и суфикс 'Method'.
- 3) Имя аргумента должно быть идентично названию того родительского контейнера, который передается в функцию.
-    Если вы хотите чтобы метод самостоятельно искал нужные данные от того ответа который пришел с сервера, то имя
-    аргументу вы должны дать 'json'.
- 4) Если условия вынуждают создать два похожих метода которые работают с одной и той же структурой, то во избежание
- дублирования названия то на конец метода разрешается добавить суффикс 'From' и имя вложенной структуры из которой
- будет извлеченны данные.
- Пример: 'followers'+'InUserGet'+'Method'+'From'+'Counters'.
+ 1) The method name must start with the name of the element that you plan to retrieve. (Ex. 'LastSeenPlatform')
+ 2) The method name must be followed by the method API name (eg 'UserGet') and the 'Method' suffix.
+ 3) The argument name must be identical to the name of the parent container that is passed to the function.
+ 4) If the conditions force the creation of two similar methods that work with the same structure, then in order
+ to avoid duplication of the name, it is allowed to add the 'From' suffix to the end of the method and the
+ name of the nested structure from which the data will be extracted.
+ Example: 'followers'+'InUserGet'+'Method'+'From'+'Counters'.
  --------------------------------------------------------------------------------------------------------------*/
 
 
@@ -36,8 +34,8 @@
 
 #pragma mark - Parsing elements from API method 'user.get'
 /*--------------------------------------------------------------------------------------------------------------
- Извлекает код платформы с которой пользователь совершил свой крайний сеанс.
- Извлекает данные из ответа сервера на выполнение метода 'UserGet'.
+ Retrieves the code of the platform from which the user made their last session.
+ Retrieves data from the server response to the 'UserGet' method execution.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSNumber*) lastSeenPlatformInUserGetMethod:(NSDictionary*)json error:(NSError*_Nullable* _Nullable)error
 {
@@ -63,7 +61,7 @@
 }
 
 /*--------------------------------------------------------------------------------------------------------------
- Извлекает количество подписчиков из словаря 'counters' который был получен в ответ вызов метода 'UserGet'.
+  Retrieves the number of subscribers from the 'counters' dictionary that was returned by a call to the 'UserGet' method.
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSNumber*) followersInUserGetMethodFromCounter:(NSDictionary*)counters error:(NSError*_Nullable* _Nullable)error
 {
@@ -77,7 +75,7 @@
 
 #pragma mark - Parsing elements from API method 'wall.post'
 /*--------------------------------------------------------------------------------------------------------------
- Извлекает 'post_id' и json полученного по методу 'wall.post'
+  Retrieves 'post_id' and json from 'wall.post' method
  --------------------------------------------------------------------------------------------------------------*/
 + (nullable NSNumber*) postIDInWallPostMethod:(NSDictionary*)json error:(NSError*_Nullable* _Nullable)error
 {
