@@ -2154,10 +2154,10 @@ In connection with the above material, I would like to recommend some technologi
 
 
 ## Additional information
-[🇷🇺Russian Readme](README(RU).md)
+
+[🇷🇺 Russian Readme](README(RU).md)
 
 
-##👨🏼‍💻 Author
-  👨🏼‍💻 @m1a7
-  👌🏻 thisismymail03@gmail.com
+## Author
 
+[👨🏼‍💻 @m1a7](github.com/m1a7)  <br>👌🏻 thisismymail03@gmail.com

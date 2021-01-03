@@ -2153,9 +2153,10 @@ typedef NS_OPTIONS(NSUInteger, ResponseValidationMask) {
 
 
 ## Дополнительно
-🇬🇧 [English Readme](README(EN).md)
+
+[🇬🇧 English Readme](README.md)
 
 
-## 👨🏼‍💻 Автор
-      👨🏼‍💻 @m1a7
-      👌🏻 thisismymail03@gmail.com
+## Автор
+
+[👨🏼‍💻 @m1a7](github.com/m1a7)  <br>👌🏻 thisismymail03@gmail.com
